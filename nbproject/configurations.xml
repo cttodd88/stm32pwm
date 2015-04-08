@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="95">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+      <logicalFolder name="cmsis" displayName="cmsis" projectFiles="true">
+        <itemPath>cmsis/core_cm4.h</itemPath>
+        <itemPath>cmsis/core_cm4_simd.h</itemPath>
+        <itemPath>cmsis/core_cmFunc.h</itemPath>
+        <itemPath>cmsis/core_cmInstr.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="cmsis_boot" displayName="cmsis_boot" projectFiles="true">
+        <logicalFolder name="startup" displayName="startup" projectFiles="true">
+          <itemPath>cmsis_boot/startup/startup_stm32f4xx.c</itemPath>
+        </logicalFolder>
+        <itemPath>cmsis_boot/stm32f4xx.h</itemPath>
+        <itemPath>cmsis_boot/stm32f4xx_conf.h</itemPath>
+        <itemPath>cmsis_boot/system_stm32f4xx.c</itemPath>
+        <itemPath>cmsis_boot/system_stm32f4xx.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="cmsis_lib" displayName="cmsis_lib" projectFiles="true">
+        <logicalFolder name="include" displayName="include" projectFiles="true">
+          <itemPath>cmsis_lib/include/misc.h</itemPath>
+          <itemPath>cmsis_lib/include/stm32f4xx_gpio.h</itemPath>
+          <itemPath>cmsis_lib/include/stm32f4xx_pwm.h</itemPath>
+          <itemPath>cmsis_lib/include/stm32f4xx_rcc.h</itemPath>
+          <itemPath>cmsis_lib/include/stm32f4xx_tim.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="source" displayName="source" projectFiles="true">
+          <itemPath>cmsis_lib/source/misc.c</itemPath>
+          <itemPath>cmsis_lib/source/stm32f4xx_gpio.c</itemPath>
+          <itemPath>cmsis_lib/source/stm32f4xx_pwm.c</itemPath>
+          <itemPath>cmsis_lib/source/stm32f4xx_rcc.c</itemPath>
+          <itemPath>cmsis_lib/source/stm32f4xx_tim.c</itemPath>
+        </logicalFolder>
+      </logicalFolder>
+      <logicalFolder name="lcd" displayName="lcd" projectFiles="true">
+        <itemPath>lcd/lcd.c</itemPath>
+        <itemPath>lcd/lcd.h</itemPath>
+      </logicalFolder>
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <itemPath>main.c</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>cmsis</Elem>
+    <Elem>cmsis_boot</Elem>
+    <Elem>cmsis_lib</Elem>
+    <Elem>lcd</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <commandLine>-mcpu=cortex-m4 -mthumb -Wall -ffunction-sections -g -O0 -DSTM32F407VG -DSTM32F4XX -DUSE_STDPERIPH_DRIVER -D__ASSEMBLY__</commandLine>
+        </cTool>
+        <linkerTool>
+          <commandLine>-mcpu=cortex-m4 -mthumb -g -nostartfiles -DSTM32F407VG -DSTM32F4XX -TSTM32F407VG_FLASH.ld -Wl,--gc-sections -g -o main.elf &amp;&amp; arm-none-eabi-objcopy -Oihex main.elf main.hex</commandLine>
+        </linkerTool>
+      </compileType>
+      <item path="cmsis/core_cm4.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis/core_cm4_simd.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis/core_cmFunc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis/core_cmInstr.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis_boot/startup/startup_stm32f4xx.c"
+            ex="false"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="cmsis_boot/stm32f4xx.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis_boot/stm32f4xx_conf.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis_boot/system_stm32f4xx.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="cmsis_boot/system_stm32f4xx.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis_lib/include/misc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis_lib/include/stm32f4xx_gpio.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis_lib/include/stm32f4xx_pwm.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis_lib/include/stm32f4xx_rcc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis_lib/include/stm32f4xx_tim.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis_lib/source/misc.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="cmsis_lib/source/stm32f4xx_gpio.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="cmsis_lib/source/stm32f4xx_pwm.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="cmsis_lib/source/stm32f4xx_rcc.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="cmsis_lib/source/stm32f4xx_tim.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="lcd/lcd.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="lcd/lcd.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.c" ex="false" tool="0" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+      </compileType>
+      <item path="cmsis/core_cm4.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis/core_cm4_simd.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis/core_cmFunc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis/core_cmInstr.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis_boot/startup/startup_stm32f4xx.c"
+            ex="false"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="cmsis_boot/stm32f4xx.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis_boot/stm32f4xx_conf.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis_boot/system_stm32f4xx.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="cmsis_boot/system_stm32f4xx.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis_lib/include/misc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis_lib/include/stm32f4xx_gpio.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis_lib/include/stm32f4xx_pwm.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis_lib/include/stm32f4xx_rcc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis_lib/include/stm32f4xx_tim.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis_lib/source/misc.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="cmsis_lib/source/stm32f4xx_gpio.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="cmsis_lib/source/stm32f4xx_pwm.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="cmsis_lib/source/stm32f4xx_rcc.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="cmsis_lib/source/stm32f4xx_tim.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="lcd/lcd.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="lcd/lcd.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.c" ex="false" tool="0" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>

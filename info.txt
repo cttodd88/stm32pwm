@@ -1,0 +1,8 @@
+arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -g -nostartfiles -DSTM32F407VG -DSTM32F4XX -TSTM32F407VG_FLASH.ld -Wl,--gc-sections startup_stm32f4xx.o main.o stm32f4xx_rcc.o stm32f4xx_gpio.o system_stm32f4xx.o misc.o -g -o main.elf
+
+
+arm-none-eabi-objcopy -Oihex main.elf main.hex
+
+/home/chris/NetBeansProjects/led3/obj/main2.hex
+
+openocd -f /usr/share/openocd/scripts/board/stm32f4discovery.cfg
