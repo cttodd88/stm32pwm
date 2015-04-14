@@ -11,3 +11,5 @@ openocd -f /usr/share/openocd/scripts/board/stm32f4discovery.cfg
 DEBUGGING
 
 ```sudo apt-get -o Dpkg::Options::="--force-overwrite" install gdb-arm-none-eabi```
+
+arm-none-eabi-gdb --eval-command="target remote localhost:3333" /home/chris/git/stm32pwm/main.elf
