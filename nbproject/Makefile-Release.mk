@@ -15,8 +15,8 @@ NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
 CC=arm-none-eabi-gcc
-CCC=arm-none-eabi-c++
-CXX=arm-none-eabi-c++
+CCC=g++
+CXX=g++
 FC=gfortran
 AS=as
 
@@ -64,11 +64,11 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/led4
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/stm32pwm
 
-${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/led4: ${OBJECTFILES}
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/stm32pwm: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
-	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/led4 ${OBJECTFILES} ${LDLIBSOPTIONS}
+	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/stm32pwm ${OBJECTFILES} ${LDLIBSOPTIONS}
 
 ${OBJECTDIR}/cmsis_boot/startup/startup_stm32f4xx.o: cmsis_boot/startup/startup_stm32f4xx.c 
 	${MKDIR} -p ${OBJECTDIR}/cmsis_boot/startup
@@ -121,7 +121,7 @@ ${OBJECTDIR}/main.o: main.c
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/led4
+	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/stm32pwm
 
 # Subprojects
 .clean-subprojects:

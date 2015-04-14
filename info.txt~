@@ -6,8 +6,3 @@ arm-none-eabi-objcopy -Oihex main.elf main.hex
 /home/chris/NetBeansProjects/led3/obj/main2.hex
 
 openocd -f /usr/share/openocd/scripts/board/stm32f4discovery.cfg
-
-
-DEBUGGING
-
-```sudo apt-get -o Dpkg::Options::="--force-overwrite" install gdb-arm-none-eabi```

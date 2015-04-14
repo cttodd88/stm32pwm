@@ -9,19 +9,19 @@ CND_DISTDIR=dist
 # Debug configuration
 CND_PLATFORM_Debug=GNU-Linux-x86
 CND_ARTIFACT_DIR_Debug=dist/Debug/GNU-Linux-x86
-CND_ARTIFACT_NAME_Debug=led4
-CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux-x86/led4
+CND_ARTIFACT_NAME_Debug=stm32pwm
+CND_ARTIFACT_PATH_Debug=dist/Debug/GNU-Linux-x86/stm32pwm
 CND_PACKAGE_DIR_Debug=dist/Debug/GNU-Linux-x86/package
-CND_PACKAGE_NAME_Debug=led4.tar
-CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux-x86/package/led4.tar
+CND_PACKAGE_NAME_Debug=stm32pwm.tar
+CND_PACKAGE_PATH_Debug=dist/Debug/GNU-Linux-x86/package/stm32pwm.tar
 # Release configuration
 CND_PLATFORM_Release=GNU-Linux-x86
 CND_ARTIFACT_DIR_Release=dist/Release/GNU-Linux-x86
-CND_ARTIFACT_NAME_Release=led4
-CND_ARTIFACT_PATH_Release=dist/Release/GNU-Linux-x86/led4
+CND_ARTIFACT_NAME_Release=stm32pwm
+CND_ARTIFACT_PATH_Release=dist/Release/GNU-Linux-x86/stm32pwm
 CND_PACKAGE_DIR_Release=dist/Release/GNU-Linux-x86/package
-CND_PACKAGE_NAME_Release=led4.tar
-CND_PACKAGE_PATH_Release=dist/Release/GNU-Linux-x86/package/led4.tar
+CND_PACKAGE_NAME_Release=stm32pwm.tar
+CND_PACKAGE_PATH_Release=dist/Release/GNU-Linux-x86/package/stm32pwm.tar
 #
 # include compiler specific variables
 #

@@ -16,7 +16,7 @@
         <gdb_options>
           <DebugOptions>
             <option name="debug_command"
-                    value="openocd -f /usr/share/openocd/scripts/board/stm32f4discovery.cfg "/>
+                    value="gdb --eval-command=&quot;target remote localhost:3333&quot; main.out"/>
           </DebugOptions>
         </gdb_options>
         <gdb_buildfirst gdb_buildfirst_overriden="false" gdb_buildfirst_old="false"/>
