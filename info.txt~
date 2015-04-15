@@ -3,6 +3,13 @@ arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -g -nostartfiles -DSTM32F407VG -DSTM32
 
 arm-none-eabi-objcopy -Oihex main.elf main.hex
 
-/home/chris/NetBeansProjects/led3/obj/main2.hex
+flash write_image erase /home/chris/NetBeansProjects/led3/obj/main2.hex
 
 openocd -f /usr/share/openocd/scripts/board/stm32f4discovery.cfg
+
+
+DEBUGGING
+
+```sudo apt-get -o Dpkg::Options::="--force-overwrite" install gdb-arm-none-eabi```
+
+arm-none-eabi-gdb --eval-command="target remote localhost:3333" /home/chris/git/stm32pwm/main.elf

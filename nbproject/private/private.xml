@@ -6,15 +6,6 @@
     </data>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/home/chris/NetBeansProjects/led4/cmsis_boot/stm32f4xx_conf.h</file>
-            <file>file:/home/chris/NetBeansProjects/led4/cmsis_boot/startup/startup_stm32f4xx.c</file>
-            <file>file:/home/chris/NetBeansProjects/led4/cmsis_boot/system_stm32f4xx.c</file>
-            <file>file:/home/chris/NetBeansProjects/led4/cmsis_lib/source/stm32f4xx_rcc.c</file>
-            <file>file:/home/chris/NetBeansProjects/led4/main.c</file>
-            <file>file:/home/chris/NetBeansProjects/led4/cmsis_lib/source/misc.c</file>
-            <file>file:/home/chris/NetBeansProjects/led4/cmsis_lib/source/stm32f4xx_gpio.c</file>
-            <file>file:/home/chris/NetBeansProjects/led4/cmsis_boot/startup/startup_stm32f407xx.s</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>
