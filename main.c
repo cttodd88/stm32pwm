@@ -40,7 +40,7 @@ int period=0;
 
 char *title = "PQ PWM C.T. T.L. A.C. F.F.";
 
-int lookup[1601]={0};
+int lookup[101]={0};
 
 
 
@@ -63,12 +63,22 @@ int main(void)
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
 	//RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
         
+        /*Frequency Calcs 
+         * 
+         * 1/((1/60)/(steps))
+         * For 50 steps we get 3 kHz
+         * TIM_Period = 84000000 / 3000 - 1 = 27999
+         
+         
+         */
+
+
+	period=13999;
+        
+        
         
 
-
-	period=874;
-
-	genLookup(lookup,1600,874);
+	genLookup(lookup,100,13999);
 
 	 /* Alternating functions for pins */
 	//PWM_TIMER_Init(220);  //40Khz 2083
@@ -225,7 +235,7 @@ int main(void)
 
     	Delay(250000);
 */
-   GPIO_SetBits(GREEN);
+         GPIO_SetBits(GREEN);
     	 Delay(250);
     	 GPIO_ResetBits(GREEN);
     	 Delay(250);
@@ -290,13 +300,13 @@ void TIM3_IRQHandler(void){
 	        TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 
 
-	if(index2<=800){
+	if(index2<=50){
 
 	PWMTIM3_InitOC4(lookup[index2]);
 
 	}
 
-	if(index2>=800){
+	if(index2>=50){
 
 	PWMTIM3_InitOC3(lookup[index2]);
 
@@ -306,7 +316,7 @@ void TIM3_IRQHandler(void){
 
 	index2++;
 
-	if(index2==1601){
+	if(index2==101){
 
 		index2=0;
 	}
