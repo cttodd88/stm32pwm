@@ -14,6 +14,11 @@
                 <sourceRootElem>cmsis_boot</sourceRootElem>
                 <sourceRootElem>cmsis_lib</sourceRootElem>
                 <sourceRootElem>lcd</sourceRootElem>
+                <sourceRootElem>Config</sourceRootElem>
+                <sourceRootElem>inc</sourceRootElem>
+                <sourceRootElem>Lib</sourceRootElem>
+                <sourceRootElem>syscalls</sourceRootElem>
+                <sourceRootElem>user</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

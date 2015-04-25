@@ -11,8 +11,20 @@
 #include "cmsis_lib/include/stm32f4xx_tim.h"
 #include "cmsis_lib/include/stm32f4xx_pwm.h"
 #include "cmsis_lib/include/misc.h"
-#include "lcd/lcd.h"
+//#include "lcd/lcd.h"
 
+#include "inc/GUI.h"
+#include "inc/DIALOG.h"
+#include "inc/GUITDRV_ADS7846.h"
+
+#include "user/LCD_STM32F4.h"
+#include "user/stm32f4xx_it.h"
+#include "user/pwm.h"
+#include "user/ts.h"
+
+#include "rtc.h"
+
+#include <stdlib.h>
 
 /* Private typedef -----------------------------------------------------------*/
 GPIO_InitTypeDef  GPIO_InitStructure;
@@ -26,6 +38,10 @@ NVIC_InitTypeDef nvicStructure;
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 unsigned int TimingDelay=0;
+TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+TIM_OCInitTypeDef  TIM_OCInitStructure;
+uint16_t CCR1_Val = 300;
+uint16_t CCR2_Val = 100;
 
 /* Private function prototypes -----------------------------------------------*/
 void Delay(unsigned int nTime);
@@ -34,11 +50,16 @@ void TimingDelay_Decrement(void);
 /* Private functions ---------------------------------------------------------*/
 
 
+WM_HWIN CreateWindow(void);
+WM_HWIN hDlg;
+
+extern GUI_PID_STATE pstate;
+
 int duty =0;
 int index2 = 0;
 int period=0;
 
-char *title = "PQ PWM C.T. T.L. A.C. F.F.";
+//char *title = "PQ PWM C.T. T.L. A.C. F.F.";
 
 int lookup[1601]={0};
 
@@ -46,27 +67,21 @@ int lookup[1601]={0};
 
 int main(void)
 {
-
-	SystemInit();
+    /*Initialization*/
+    PROGBAR_Handle hProgbar;
+    
+    SystemInit();
         
-       
+    if(SysTick_Config(SystemCoreClock/1000)){
+        while(1);
+    }
+              
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE, ENABLE);
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
+    //RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);                
 
-	if(SysTick_Config(SystemCoreClock/1000)){
-
-		while(1);
-	}
-        
-      
-
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE, ENABLE);
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
-	//RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
-        
-        
-
-
-	period=874;
+    period=874;
 
 	genLookup(lookup,1600,874);
 
@@ -121,22 +136,82 @@ int main(void)
 	  nvicStructure.NVIC_IRQChannelCmd = ENABLE;
 	  NVIC_Init(&nvicStructure);
 
+    Init_GPIO();
+    Init_FSMC();
+    
+    /* Enable the CRC Module */
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_CRC, ENABLE);
 
-	  char *string;
+    GUI_Init();
 
-	  string="PQ PWM C.T. T.L. A.C. F.F.";
+    Init_LCD();
 
-	  lcdInit();
+    touch_init();
 
-	  lcd_puts(string);
+    pwm_init();
+    //turn on lcd backlight
+    GPIO_ResetBits(GPIOD, GPIO_Pin_12);
 
+    rtcConfig();
 
+    GUI_SetFont(&GUI_Font8x16);
+    GUI_SetBkColor(GUI_BLUE);
+    GUI_Clear();
+    GUI_DispString("Elex268 Lab6 - RTC");
+    //  GUI_DispString(GUI_GetVersionString());
+    GUI_DispString("\n\n\n");
+    GUI_DrawGradientH(5, 150, 315, 235, 0x0000FF, 0x00FFFF);
+
+    PROGBAR_SetDefaultSkin(PROGBAR_SKIN_FLEX); // Sets the default skin for new widgets
+
+    /* Create progress bar at location x = 10, y = 10, length = 219, height = 30 */
+    hProgbar = PROGBAR_CreateEx(50, 180, 219, 30, 0, WM_CF_SHOW, 0, GUI_ID_PROGBAR0);
+    /* Set progress bar font */
+    PROGBAR_SetFont(hProgbar, &GUI_Font8x16);
+
+    PROGBAR_SetMinMax(hProgbar, 0, 59);
+
+    /* Set progress bar text */
+    PROGBAR_SetText(hProgbar, "...");
+    /*char *string;
+
+    string="PQ PWM C.T. T.L. A.C. F.F.";
+
+    lcdInit();
+
+    lcd_puts(string);*/
 
     while(1)
     {
+        int tempSeconds;
+	char tempSecString[5];
 
+        printTime();
 
+        GUI_PID_GetCurrentState(&pstate);
 
+        GUI_SetFont(&GUI_Font8x16);
+
+        if (pstate.Pressed) {
+            GUI_DispDecAt( pstate.x, 280,20,4);
+            GUI_DispDecAt( pstate.y, 280,40,4);
+            GUI_DispStringAt("-P-", 280,60);
+        }
+        else {
+            GUI_DispDecAt( 0, 280,20,4);
+            GUI_DispDecAt( 0, 280,40,4);
+            GUI_DispStringAt("- -", 280,60);
+        }
+
+        //print progress bar displaying seconds
+        tempSeconds=myclockTimeStruct.RTC_Seconds;	//RTC_Seconds in BCD
+        tempSeconds=tempSeconds/16*10+tempSeconds%16;	//convert to decimal
+        sprintf(tempSecString, "%02d", tempSeconds);	//convert dec value to string
+
+        PROGBAR_SetValue(hProgbar, tempSeconds);		//use dec value for bar position
+        PROGBAR_SetText(hProgbar, tempSecString);		//use string for value on progress bar
+
+        GUI_Delay(50);
 /*
     	while(duty<=8399){
     		PWM_InitOC4(duty);
@@ -225,7 +300,7 @@ int main(void)
 
     	Delay(250000);
 */
-   GPIO_SetBits(GREEN);
+   /*GPIO_SetBits(GREEN);
     	 Delay(250);
     	 GPIO_ResetBits(GREEN);
     	 Delay(250);
@@ -243,7 +318,7 @@ int main(void)
     	 GPIO_SetBits(BLUE);
     	 Delay(250);
     	 GPIO_ResetBits(BLUE);
-    	 Delay(250);      
+    	 Delay(250); */     
         
     }//END WHILE
 
@@ -269,6 +344,8 @@ void Delay(unsigned int nTime)
 /*The systick handler in stm32f4xx_it.c calls this function and
  *decrements the TimingDelay variable every millisecond */
 
+// Conflict with display functions, confirmed unused - Taylor
+/*
 void TimingDelay_Decrement(void){
 if(TimingDelay!=0x00){
 
@@ -280,6 +357,7 @@ TimingDelay--;
 void SysTick_Handler(void) {
 	TimingDelay_Decrement();
 }
+*/
 
 void TIM3_IRQHandler(void){
 

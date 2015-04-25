@@ -4,6 +4,8 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>delays.h</itemPath>
+      <itemPath>rtc.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -26,28 +28,170 @@
       <logicalFolder name="cmsis_lib" displayName="cmsis_lib" projectFiles="true">
         <logicalFolder name="include" displayName="include" projectFiles="true">
           <itemPath>cmsis_lib/include/misc.h</itemPath>
+          <itemPath>cmsis_lib/include/stm32f4xx_exti.h</itemPath>
+          <itemPath>cmsis_lib/include/stm32f4xx_fsmc.h</itemPath>
           <itemPath>cmsis_lib/include/stm32f4xx_gpio.h</itemPath>
           <itemPath>cmsis_lib/include/stm32f4xx_pwm.h</itemPath>
+          <itemPath>cmsis_lib/include/stm32f4xx_pwr.h</itemPath>
           <itemPath>cmsis_lib/include/stm32f4xx_rcc.h</itemPath>
+          <itemPath>cmsis_lib/include/stm32f4xx_rtc.h</itemPath>
+          <itemPath>cmsis_lib/include/stm32f4xx_spi.h</itemPath>
+          <itemPath>cmsis_lib/include/stm32f4xx_syscfg.h</itemPath>
           <itemPath>cmsis_lib/include/stm32f4xx_tim.h</itemPath>
         </logicalFolder>
         <logicalFolder name="source" displayName="source" projectFiles="true">
           <itemPath>cmsis_lib/source/misc.c</itemPath>
+          <itemPath>cmsis_lib/source/stm32f4xx_exti.c</itemPath>
+          <itemPath>cmsis_lib/source/stm32f4xx_fsmc.c</itemPath>
           <itemPath>cmsis_lib/source/stm32f4xx_gpio.c</itemPath>
           <itemPath>cmsis_lib/source/stm32f4xx_pwm.c</itemPath>
+          <itemPath>cmsis_lib/source/stm32f4xx_pwr.c</itemPath>
           <itemPath>cmsis_lib/source/stm32f4xx_rcc.c</itemPath>
+          <itemPath>cmsis_lib/source/stm32f4xx_rtc.c</itemPath>
+          <itemPath>cmsis_lib/source/stm32f4xx_spi.c</itemPath>
+          <itemPath>cmsis_lib/source/stm32f4xx_syscfg.c</itemPath>
           <itemPath>cmsis_lib/source/stm32f4xx_tim.c</itemPath>
         </logicalFolder>
+      </logicalFolder>
+      <logicalFolder name="Config" displayName="Config" projectFiles="true">
+        <itemPath>Config/GUIConf.c</itemPath>
+        <itemPath>Config/GUIConf.h</itemPath>
+        <itemPath>Config/GUIDRV_Template.c</itemPath>
+        <itemPath>Config/GUIDRV_Template.h</itemPath>
+        <itemPath>Config/LCDConf_FlexColor_Template.c</itemPath>
+        <itemPath>Config/LCDConf_FlexColor_Template.h</itemPath>
+        <itemPath>Config/SIMConf.c</itemPath>
+      </logicalFolder>
+      <logicalFolder name="inc" displayName="inc" projectFiles="true">
+        <itemPath>inc/BUTTON.h</itemPath>
+        <itemPath>inc/BUTTON_Private.h</itemPath>
+        <itemPath>inc/CALENDAR.h</itemPath>
+        <itemPath>inc/CHECKBOX.h</itemPath>
+        <itemPath>inc/CHECKBOX_Private.h</itemPath>
+        <itemPath>inc/CHOOSECOLOR.h</itemPath>
+        <itemPath>inc/CHOOSEFILE.h</itemPath>
+        <itemPath>inc/DIALOG.h</itemPath>
+        <itemPath>inc/DIALOG_Intern.h</itemPath>
+        <itemPath>inc/DROPDOWN.h</itemPath>
+        <itemPath>inc/DROPDOWN_Private.h</itemPath>
+        <itemPath>inc/EDIT.h</itemPath>
+        <itemPath>inc/EDIT_Private.h</itemPath>
+        <itemPath>inc/FRAMEWIN.h</itemPath>
+        <itemPath>inc/FRAMEWIN_Private.h</itemPath>
+        <itemPath>inc/GRAPH.h</itemPath>
+        <itemPath>inc/GRAPH_Private.h</itemPath>
+        <itemPath>inc/GUI.h</itemPath>
+        <itemPath>inc/GUIDRV_DCache.h</itemPath>
+        <itemPath>inc/GUIDRV_DCache_Private.h</itemPath>
+        <itemPath>inc/GUIDRV_Dist.h</itemPath>
+        <itemPath>inc/GUIDRV_FlexColor.h</itemPath>
+        <itemPath>inc/GUIDRV_FlexColor_Private.h</itemPath>
+        <itemPath>inc/GUIDRV_Generic.h</itemPath>
+        <itemPath>inc/GUIDRV_Lin.h</itemPath>
+        <itemPath>inc/GUIDRV_Lin_Opt_16.h</itemPath>
+        <itemPath>inc/GUIDRV_Lin_Opt_24.h</itemPath>
+        <itemPath>inc/GUIDRV_Lin_Opt_32.h</itemPath>
+        <itemPath>inc/GUIDRV_Lin_Opt_8.h</itemPath>
+        <itemPath>inc/GUIDRV_Lin_Private.h</itemPath>
+        <itemPath>inc/GUIDRV_NoOpt_1_8.h</itemPath>
+        <itemPath>inc/GUIDRV_Template.h</itemPath>
+        <itemPath>inc/GUIDRV_TemplateI.h</itemPath>
+        <itemPath>inc/GUIDRV_TemplateI_Private.h</itemPath>
+        <itemPath>inc/GUITDRV_ADS7846.h</itemPath>
+        <itemPath>inc/GUI_ARRAY.h</itemPath>
+        <itemPath>inc/GUI_ARRAY_Private.h</itemPath>
+        <itemPath>inc/GUI_BMP_Private.h</itemPath>
+        <itemPath>inc/GUI_ConfDefaults.h</itemPath>
+        <itemPath>inc/GUI_Debug.h</itemPath>
+        <itemPath>inc/GUI_FontIntern.h</itemPath>
+        <itemPath>inc/GUI_GIF_Private.h</itemPath>
+        <itemPath>inc/GUI_HOOK.h</itemPath>
+        <itemPath>inc/GUI_JPEG_Private.h</itemPath>
+        <itemPath>inc/GUI_Private.h</itemPath>
+        <itemPath>inc/GUI_SIM_Win32.h</itemPath>
+        <itemPath>inc/GUI_SPRITE_Private.h</itemPath>
+        <itemPath>inc/GUI_SetOrientation.h</itemPath>
+        <itemPath>inc/GUI_SetOrientationCX.h</itemPath>
+        <itemPath>inc/GUI_Type.h</itemPath>
+        <itemPath>inc/GUI_VNC.h</itemPath>
+        <itemPath>inc/GUI_Version.h</itemPath>
+        <itemPath>inc/Global.h</itemPath>
+        <itemPath>inc/HEADER.h</itemPath>
+        <itemPath>inc/HEADER_Private.h</itemPath>
+        <itemPath>inc/ICONVIEW.h</itemPath>
+        <itemPath>inc/ICONVIEW_Private.h</itemPath>
+        <itemPath>inc/IMAGE.h</itemPath>
+        <itemPath>inc/IMAGE_Private.h</itemPath>
+        <itemPath>inc/KNOB.h</itemPath>
+        <itemPath>inc/KNOB_Private.h</itemPath>
+        <itemPath>inc/LCD.h</itemPath>
+        <itemPath>inc/LCD_ConfDefaults.h</itemPath>
+        <itemPath>inc/LCD_Private.h</itemPath>
+        <itemPath>inc/LCD_Protected.h</itemPath>
+        <itemPath>inc/LCD_SIM.h</itemPath>
+        <itemPath>inc/LISTBOX.h</itemPath>
+        <itemPath>inc/LISTBOX_Private.h</itemPath>
+        <itemPath>inc/LISTVIEW.h</itemPath>
+        <itemPath>inc/LISTVIEW_Private.h</itemPath>
+        <itemPath>inc/LISTWHEEL.h</itemPath>
+        <itemPath>inc/LISTWHEEL_Private.h</itemPath>
+        <itemPath>inc/MENU.h</itemPath>
+        <itemPath>inc/MENU_Private.h</itemPath>
+        <itemPath>inc/MESSAGEBOX.h</itemPath>
+        <itemPath>inc/MULTIEDIT.h</itemPath>
+        <itemPath>inc/MULTIPAGE.h</itemPath>
+        <itemPath>inc/MULTIPAGE_Private.h</itemPath>
+        <itemPath>inc/PROGBAR.h</itemPath>
+        <itemPath>inc/PROGBAR_Private.h</itemPath>
+        <itemPath>inc/RADIO.h</itemPath>
+        <itemPath>inc/RADIO_Private.h</itemPath>
+        <itemPath>inc/SCROLLBAR.h</itemPath>
+        <itemPath>inc/SCROLLBAR_Private.h</itemPath>
+        <itemPath>inc/SLIDER.h</itemPath>
+        <itemPath>inc/SLIDER_Private.h</itemPath>
+        <itemPath>inc/SPINBOX.h</itemPath>
+        <itemPath>inc/SPINBOX_Private.h</itemPath>
+        <itemPath>inc/TEXT.h</itemPath>
+        <itemPath>inc/TEXT_Private.h</itemPath>
+        <itemPath>inc/TREEVIEW.h</itemPath>
+        <itemPath>inc/TREEVIEW_Private.h</itemPath>
+        <itemPath>inc/WIDGET.h</itemPath>
+        <itemPath>inc/WINDOW_Private.h</itemPath>
+        <itemPath>inc/WM.h</itemPath>
+        <itemPath>inc/WM_GUI.h</itemPath>
+        <itemPath>inc/WM_Intern.h</itemPath>
       </logicalFolder>
       <logicalFolder name="lcd" displayName="lcd" projectFiles="true">
         <itemPath>lcd/lcd.c</itemPath>
         <itemPath>lcd/lcd.h</itemPath>
       </logicalFolder>
+      <logicalFolder name="Lib" displayName="Lib" projectFiles="true">
+      </logicalFolder>
+      <logicalFolder name="syscalls" displayName="syscalls" projectFiles="true">
+        <itemPath>syscalls/syscalls.c</itemPath>
+      </logicalFolder>
+      <logicalFolder name="user" displayName="user" projectFiles="true">
+        <itemPath>user/GUITDRV_ADS7846.h</itemPath>
+        <itemPath>user/GUI_X_Touch.c</itemPath>
+        <itemPath>user/LCD_STM32F4.c</itemPath>
+        <itemPath>user/LCD_STM32F4.h</itemPath>
+        <itemPath>user/PlianHourHandbw.c</itemPath>
+        <itemPath>user/gui_x.c</itemPath>
+        <itemPath>user/pwm.c</itemPath>
+        <itemPath>user/pwm.h</itemPath>
+        <itemPath>user/stm32f4xx_conf.h</itemPath>
+        <itemPath>user/stm32f4xx_it.c</itemPath>
+        <itemPath>user/stm32f4xx_it.h</itemPath>
+        <itemPath>user/ts.c</itemPath>
+        <itemPath>user/ts.h</itemPath>
+      </logicalFolder>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>delays.c</itemPath>
       <itemPath>main.c</itemPath>
+      <itemPath>rtc.c</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -66,6 +210,11 @@
     <Elem>cmsis_boot</Elem>
     <Elem>cmsis_lib</Elem>
     <Elem>lcd</Elem>
+    <Elem>Config</Elem>
+    <Elem>inc</Elem>
+    <Elem>Lib</Elem>
+    <Elem>syscalls</Elem>
+    <Elem>user</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -77,12 +226,38 @@
       </toolsSet>
       <compileType>
         <cTool>
-          <commandLine>-mcpu=cortex-m4 -mthumb -Wall -ffunction-sections -g -O0 -DSTM32F407VG -DSTM32F4XX -DUSE_STDPERIPH_DRIVER -D__ASSEMBLY__</commandLine>
+          <commandlineTool>arm-none-eabi-gcc</commandlineTool>
+          <commandLine>-mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wall -ffunction-sections -g -O0 -DSTM32F407VG -DSTM32F4XX -DUSE_STDPERIPH_DRIVER -D__ASSEMBLY__ -D__FPU_USED "-DUSE_TOUCH = 1"</commandLine>
         </cTool>
         <linkerTool>
-          <commandLine>-mcpu=cortex-m4 -mthumb -g -nostartfiles -DSTM32F407VG -DSTM32F4XX -TSTM32F407VG_FLASH.ld -Wl,--gc-sections -g -o main.elf &amp;&amp; arm-none-eabi-objcopy -Oihex main.elf main.hex</commandLine>
+          <commandlineTool>arm-none-eabi-gcc</commandlineTool>
+          <linkerLibItems>
+            <linkerLibFileItem>Lib/libSTemWin526_CM4_GCC.a</linkerLibFileItem>
+            <linkerLibFileItem>Lib/libSTemWin526_CM4_GCC_ot.a</linkerLibFileItem>
+          </linkerLibItems>
+          <commandLine>-mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -g -nostartfiles -DSTM32F407VG -DSTM32F4XX -TSTM32F407VG_FLASH.ld -Wl,--gc-sections -g -o main.elf &amp;&amp; arm-none-eabi-objcopy -Oihex main.elf main.hex</commandLine>
         </linkerTool>
       </compileType>
+      <item path="Config/GUIConf.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="Config/GUIConf.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Config/GUIDRV_Template.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="Config/GUIDRV_Template.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Config/LCDConf_FlexColor_Template.c"
+            ex="false"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="Config/LCDConf_FlexColor_Template.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="Config/SIMConf.c" ex="false" tool="0" flavor2="0">
+      </item>
       <item path="cmsis/core_cm4.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="cmsis/core_cm4_simd.h" ex="false" tool="3" flavor2="0">
@@ -106,29 +281,289 @@
       </item>
       <item path="cmsis_lib/include/misc.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="cmsis_lib/include/stm32f4xx_exti.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis_lib/include/stm32f4xx_fsmc.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="cmsis_lib/include/stm32f4xx_gpio.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="cmsis_lib/include/stm32f4xx_pwm.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="cmsis_lib/include/stm32f4xx_pwr.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="cmsis_lib/include/stm32f4xx_rcc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis_lib/include/stm32f4xx_rtc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis_lib/include/stm32f4xx_spi.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis_lib/include/stm32f4xx_syscfg.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="cmsis_lib/include/stm32f4xx_tim.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="cmsis_lib/source/misc.c" ex="false" tool="0" flavor2="0">
       </item>
+      <item path="cmsis_lib/source/stm32f4xx_exti.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="cmsis_lib/source/stm32f4xx_fsmc.c" ex="false" tool="0" flavor2="0">
+      </item>
       <item path="cmsis_lib/source/stm32f4xx_gpio.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="cmsis_lib/source/stm32f4xx_pwm.c" ex="false" tool="0" flavor2="0">
       </item>
+      <item path="cmsis_lib/source/stm32f4xx_pwr.c" ex="false" tool="0" flavor2="0">
+      </item>
       <item path="cmsis_lib/source/stm32f4xx_rcc.c" ex="false" tool="0" flavor2="0">
       </item>
+      <item path="cmsis_lib/source/stm32f4xx_rtc.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="cmsis_lib/source/stm32f4xx_spi.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="cmsis_lib/source/stm32f4xx_syscfg.c"
+            ex="false"
+            tool="0"
+            flavor2="0">
+      </item>
       <item path="cmsis_lib/source/stm32f4xx_tim.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="delays.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="delays.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/BUTTON.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/BUTTON_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/CALENDAR.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/CHECKBOX.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/CHECKBOX_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/CHOOSECOLOR.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/CHOOSEFILE.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/DIALOG.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/DIALOG_Intern.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/DROPDOWN.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/DROPDOWN_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/EDIT.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/EDIT_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/FRAMEWIN.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/FRAMEWIN_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GRAPH.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GRAPH_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_DCache.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_DCache_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_Dist.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_FlexColor.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_FlexColor_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_Generic.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_Lin.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_Lin_Opt_16.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_Lin_Opt_24.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_Lin_Opt_32.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_Lin_Opt_8.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_Lin_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_NoOpt_1_8.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_Template.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_TemplateI.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_TemplateI_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUITDRV_ADS7846.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_ARRAY.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_ARRAY_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_BMP_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_ConfDefaults.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_Debug.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_FontIntern.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_GIF_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_HOOK.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_JPEG_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_SIM_Win32.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_SPRITE_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_SetOrientation.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_SetOrientationCX.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_Type.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_VNC.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_Version.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/Global.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/HEADER.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/HEADER_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/ICONVIEW.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/ICONVIEW_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/IMAGE.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/IMAGE_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/KNOB.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/KNOB_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/LCD.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/LCD_ConfDefaults.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/LCD_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/LCD_Protected.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/LCD_SIM.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/LISTBOX.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/LISTBOX_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/LISTVIEW.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/LISTVIEW_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/LISTWHEEL.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/LISTWHEEL_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/MENU.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/MENU_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/MESSAGEBOX.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/MULTIEDIT.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/MULTIPAGE.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/MULTIPAGE_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/PROGBAR.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/PROGBAR_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/RADIO.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/RADIO_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/SCROLLBAR.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/SCROLLBAR_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/SLIDER.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/SLIDER_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/SPINBOX.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/SPINBOX_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/TEXT.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/TEXT_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/TREEVIEW.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/TREEVIEW_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/WIDGET.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/WINDOW_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/WM.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/WM_GUI.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/WM_Intern.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="lcd/lcd.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="lcd/lcd.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="rtc.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="rtc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="syscalls/syscalls.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="user/GUITDRV_ADS7846.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="user/GUI_X_Touch.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="user/LCD_STM32F4.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="user/LCD_STM32F4.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="user/PlianHourHandbw.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="user/gui_x.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="user/pwm.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="user/pwm.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="user/stm32f4xx_conf.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="user/stm32f4xx_it.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="user/stm32f4xx_it.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="user/ts.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="user/ts.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -151,6 +586,26 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="Config/GUIConf.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="Config/GUIConf.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Config/GUIDRV_Template.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="Config/GUIDRV_Template.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Config/LCDConf_FlexColor_Template.c"
+            ex="false"
+            tool="0"
+            flavor2="0">
+      </item>
+      <item path="Config/LCDConf_FlexColor_Template.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="Config/SIMConf.c" ex="false" tool="0" flavor2="0">
+      </item>
       <item path="cmsis/core_cm4.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="cmsis/core_cm4_simd.h" ex="false" tool="3" flavor2="0">
@@ -174,29 +629,289 @@
       </item>
       <item path="cmsis_lib/include/misc.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="cmsis_lib/include/stm32f4xx_exti.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis_lib/include/stm32f4xx_fsmc.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="cmsis_lib/include/stm32f4xx_gpio.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="cmsis_lib/include/stm32f4xx_pwm.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="cmsis_lib/include/stm32f4xx_pwr.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="cmsis_lib/include/stm32f4xx_rcc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis_lib/include/stm32f4xx_rtc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis_lib/include/stm32f4xx_spi.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis_lib/include/stm32f4xx_syscfg.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
       </item>
       <item path="cmsis_lib/include/stm32f4xx_tim.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="cmsis_lib/source/misc.c" ex="false" tool="0" flavor2="0">
       </item>
+      <item path="cmsis_lib/source/stm32f4xx_exti.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="cmsis_lib/source/stm32f4xx_fsmc.c" ex="false" tool="0" flavor2="0">
+      </item>
       <item path="cmsis_lib/source/stm32f4xx_gpio.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="cmsis_lib/source/stm32f4xx_pwm.c" ex="false" tool="0" flavor2="0">
       </item>
+      <item path="cmsis_lib/source/stm32f4xx_pwr.c" ex="false" tool="0" flavor2="0">
+      </item>
       <item path="cmsis_lib/source/stm32f4xx_rcc.c" ex="false" tool="0" flavor2="0">
       </item>
+      <item path="cmsis_lib/source/stm32f4xx_rtc.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="cmsis_lib/source/stm32f4xx_spi.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="cmsis_lib/source/stm32f4xx_syscfg.c"
+            ex="false"
+            tool="0"
+            flavor2="0">
+      </item>
       <item path="cmsis_lib/source/stm32f4xx_tim.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="delays.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="delays.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/BUTTON.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/BUTTON_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/CALENDAR.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/CHECKBOX.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/CHECKBOX_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/CHOOSECOLOR.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/CHOOSEFILE.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/DIALOG.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/DIALOG_Intern.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/DROPDOWN.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/DROPDOWN_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/EDIT.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/EDIT_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/FRAMEWIN.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/FRAMEWIN_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GRAPH.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GRAPH_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_DCache.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_DCache_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_Dist.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_FlexColor.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_FlexColor_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_Generic.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_Lin.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_Lin_Opt_16.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_Lin_Opt_24.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_Lin_Opt_32.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_Lin_Opt_8.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_Lin_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_NoOpt_1_8.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_Template.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_TemplateI.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUIDRV_TemplateI_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUITDRV_ADS7846.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_ARRAY.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_ARRAY_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_BMP_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_ConfDefaults.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_Debug.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_FontIntern.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_GIF_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_HOOK.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_JPEG_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_SIM_Win32.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_SPRITE_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_SetOrientation.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_SetOrientationCX.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_Type.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_VNC.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/GUI_Version.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/Global.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/HEADER.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/HEADER_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/ICONVIEW.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/ICONVIEW_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/IMAGE.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/IMAGE_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/KNOB.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/KNOB_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/LCD.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/LCD_ConfDefaults.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/LCD_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/LCD_Protected.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/LCD_SIM.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/LISTBOX.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/LISTBOX_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/LISTVIEW.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/LISTVIEW_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/LISTWHEEL.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/LISTWHEEL_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/MENU.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/MENU_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/MESSAGEBOX.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/MULTIEDIT.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/MULTIPAGE.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/MULTIPAGE_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/PROGBAR.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/PROGBAR_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/RADIO.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/RADIO_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/SCROLLBAR.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/SCROLLBAR_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/SLIDER.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/SLIDER_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/SPINBOX.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/SPINBOX_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/TEXT.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/TEXT_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/TREEVIEW.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/TREEVIEW_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/WIDGET.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/WINDOW_Private.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/WM.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/WM_GUI.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="inc/WM_Intern.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="lcd/lcd.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="lcd/lcd.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="rtc.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="rtc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="syscalls/syscalls.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="user/GUITDRV_ADS7846.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="user/GUI_X_Touch.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="user/LCD_STM32F4.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="user/LCD_STM32F4.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="user/PlianHourHandbw.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="user/gui_x.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="user/pwm.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="user/pwm.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="user/stm32f4xx_conf.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="user/stm32f4xx_it.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="user/stm32f4xx_it.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="user/ts.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="user/ts.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
   </confs>
