@@ -3,7 +3,8 @@
 // Author: Chris Todd
 // ID: C0304228
 // Creation date: 3/10/2015
-// Last updated:
+// Last updated: 4/27/2015 - Taylor Long
+// Description: Integrated Display code with PWM code
 
 #include "cmsis_boot/stm32f4xx.h"
 #include "cmsis_lib/include/stm32f4xx_gpio.h"
@@ -31,11 +32,9 @@ GPIO_InitTypeDef  GPIO_InitStructure;
 NVIC_InitTypeDef nvicStructure;
 
 /* Private define ------------------------------------------------------------*/
-#define GREEN  GPIOD, GPIO_Pin_12
-#define ORANGE GPIOD, GPIO_Pin_13
-#define RED GPIOD, GPIO_Pin_14
-#define BLUE GPIOD, GPIO_Pin_15
+
 /* Private macro -------------------------------------------------------------*/
+
 /* Private variables ---------------------------------------------------------*/
 unsigned int TimingDelay=0;
 TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
@@ -46,49 +45,52 @@ uint16_t CCR2_Val = 100;
 /* Private function prototypes -----------------------------------------------*/
 void Delay(unsigned int nTime);
 void TimingDelay_Decrement(void);
+void cbMenu(WM_MESSAGE * pMsg);
+void updateTouch(void);
 
 /* Private functions ---------------------------------------------------------*/
 
 
-WM_HWIN CreateWindow(void);
-WM_HWIN hDlg;
+//WM_HWIN CreateWindow(void);
+//WM_HWIN hDlg;
 
 extern GUI_PID_STATE pstate;
 
 int duty =0;
 int index2 = 0;
-int period=0;
-
-//char *title = "PQ PWM C.T. T.L. A.C. F.F.";
-
-int lookup[1601]={0};
-
-
+int lookup[101]={0};
+BUTTON_Handle hButtonHome;
 
 int main(void)
 {
+    /*Variables*/
+    int period = 13999;
+    WM_HWIN hMenu; // menu window handle
+    
+    // Button Handles
+    
+    BUTTON_Handle hButtonBatt;
+    BUTTON_Handle hButtonSys;
+    BUTTON_Handle hButtonAbout;
+    
     /*Initialization*/
-    PROGBAR_Handle hProgbar;
     
     SystemInit();
         
     if(SysTick_Config(SystemCoreClock/1000)){
         while(1);
     }
-              
-    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
-    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE, ENABLE);
-    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
-    //RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);                
+    
+    Init_GPIO(); // Ports C,D,E Clocks enabled in here
+    //RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
 
-    period=874;
+    //period=874;
+    genLookup(lookup,100,13999);
 
-	genLookup(lookup,1600,874);
-
-	 /* Alternating functions for pins */
-	//PWM_TIMER_Init(220);  //40Khz 2083
-	PWM_TIMER_Init3(period); //500 KHz 166
-	//PWM_TIMER_Init8(8399);
+    /* Alternating functions for pins */
+    //PWM_TIMER_Init(220);  //40Khz 2083
+    PWM_TIMER_Init3(period); //500 KHz 166
+    //PWM_TIMER_Init8(8399);
     /*
 	PWM_InitOC1(83);
     PWM_InitOC2(4199);
@@ -96,47 +98,27 @@ int main(void)
     PWM_InitOC4(83);
 	*/
     //GPIO_PinAFConfig(GPIOD, GPIO_PinSource12, GPIO_AF_TIM4);
-   // GPIO_PinAFConfig(GPIOD, GPIO_PinSource13, GPIO_AF_TIM4);
-   // GPIO_PinAFConfig(GPIOD, GPIO_PinSource14, GPIO_AF_TIM4);
+    //GPIO_PinAFConfig(GPIOD, GPIO_PinSource13, GPIO_AF_TIM4);
+    //GPIO_PinAFConfig(GPIOD, GPIO_PinSource14, GPIO_AF_TIM4);
     //GPIO_PinAFConfig(GPIOD, GPIO_PinSource15, GPIO_AF_TIM4);
-	GPIO_PinAFConfig(GPIOC, GPIO_PinSource8, GPIO_AF_TIM3);
-	GPIO_PinAFConfig(GPIOC, GPIO_PinSource9, GPIO_AF_TIM3);
+    GPIO_PinAFConfig(GPIOC, GPIO_PinSource8, GPIO_AF_TIM3);
+    GPIO_PinAFConfig(GPIOC, GPIO_PinSource9, GPIO_AF_TIM3);
     //GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_TIM1);
-    /* Configure PD12, PD13, PD14 and PD15 in output pushpull mode */
 
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8|GPIO_Pin_9;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+    GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+    GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+    GPIO_Init(GPIOC, &GPIO_InitStructure);
 
-      GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8|GPIO_Pin_9;
-   	  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
-   	  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-   	  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
-   	  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-   	  GPIO_Init(GPIOC, &GPIO_InitStructure);
+    TIM_ITConfig(TIM3,TIM_IT_Update,ENABLE);
+    nvicStructure.NVIC_IRQChannel = TIM3_IRQn;
+    nvicStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    nvicStructure.NVIC_IRQChannelSubPriority = 1;
+    nvicStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&nvicStructure);
 
-	 /* Configure PD12, PD13, PD14 and PD15 in output pushpull mode */
-
-	  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12|GPIO_Pin_13|GPIO_Pin_14|GPIO_Pin_15;
-	  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-	  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
-	  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	  GPIO_Init(GPIOD, &GPIO_InitStructure);
-
-	  //Configure LCD Peripherals
-	  GPIO_InitStructure.GPIO_Pin = (GPIO_Pin_8|GPIO_Pin_9|GPIO_Pin_10|GPIO_Pin_11|GPIO_Pin_12|GPIO_Pin_13|GPIO_Pin_14|GPIO_Pin_15);
-	  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-	  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	  GPIO_Init(GPIOE, &GPIO_InitStructure);
-
-
-	  TIM_ITConfig(TIM3,TIM_IT_Update,ENABLE);
-	  nvicStructure.NVIC_IRQChannel = TIM3_IRQn;
-	  nvicStructure.NVIC_IRQChannelPreemptionPriority = 0;
-	  nvicStructure.NVIC_IRQChannelSubPriority = 1;
-	  nvicStructure.NVIC_IRQChannelCmd = ENABLE;
-	  NVIC_Init(&nvicStructure);
-
-    Init_GPIO();
     Init_FSMC();
     
     /* Enable the CRC Module */
@@ -152,46 +134,120 @@ int main(void)
     //turn on lcd backlight
     GPIO_ResetBits(GPIOD, GPIO_Pin_12);
 
-    rtcConfig();
+    //rtcConfig();
 
     GUI_SetFont(&GUI_Font8x16);
-    GUI_SetBkColor(GUI_BLUE);
+    GUI_SetBkColor(GUI_BLACK);
     GUI_Clear();
-    GUI_DispString("Elex268 Lab6 - RTC");
+    GUI_DispString("Sentinel Power");
     //  GUI_DispString(GUI_GetVersionString());
     GUI_DispString("\n\n\n");
-    GUI_DrawGradientH(5, 150, 315, 235, 0x0000FF, 0x00FFFF);
+    
+    hMenu = WM_CreateWindow(0, 190, 320, 50, WM_CF_SHOW, cbMenu, 0);
+    WM_SelectWindow(hMenu);
+    hButtonHome = BUTTON_CreateEx(0, 0, 80, 50, hMenu, WM_CF_SHOW, 0, GUI_ID_BUTTON0);
+    BUTTON_SetFont(hButtonHome, &GUI_Font8x16);
+    BUTTON_SetText(hButtonHome, "Home");
+    hButtonBatt = BUTTON_CreateEx(80, 0, 80, 50, hMenu, WM_CF_SHOW, 0, GUI_ID_BUTTON1);
+    BUTTON_SetFont(hButtonBatt, &GUI_Font8x16);
+    BUTTON_SetText(hButtonBatt, "Battery");
+    hButtonSys = BUTTON_CreateEx(160, 0, 80, 50, hMenu, WM_CF_SHOW, 0, GUI_ID_BUTTON2);
+    BUTTON_SetFont(hButtonSys, &GUI_Font8x16);
+    BUTTON_SetText(hButtonSys, "System");
+    hButtonAbout = BUTTON_CreateEx(240, 0, 80, 50, hMenu, WM_CF_SHOW, 0, GUI_ID_BUTTON3);
+    BUTTON_SetFont(hButtonAbout, &GUI_Font8x16);
+    BUTTON_SetText(hButtonAbout, "About");
+    //BUTTON_SetPressed(hButtonBatt, 1);
+    //GUI_SetBkColor(GUI_RED);
+    GUI_Clear();
+    WM_SelectWindow(WM_HBKWIN);
+    WM_SetFocus(hMenu);
+    
+    WM_SetpfPollPID(updateTouch);
+    //GUI_SetBkColor(GUI_BLACK);
+    
+    //GUI_DrawGradientH(5, 150, 315, 235, 0x0000FF, 0x00FFFF);
 
-    PROGBAR_SetDefaultSkin(PROGBAR_SKIN_FLEX); // Sets the default skin for new widgets
+    //BUTTON_SetDefaultSkin(BUTTON_SKIN_FLEX); // Sets the default skin for new widgets
 
     /* Create progress bar at location x = 10, y = 10, length = 219, height = 30 */
-    hProgbar = PROGBAR_CreateEx(50, 180, 219, 30, 0, WM_CF_SHOW, 0, GUI_ID_PROGBAR0);
+    //hProgbar = PROGBAR_CreateEx(50, 180, 219, 30, 0, WM_CF_SHOW, 0, GUI_ID_PROGBAR0);
+    //hButton = BUTTON_CreateEx(50, 180, 150, 50, 0, WM_CF_SHOW, 0, GUI_ID_BUTTON0);
+    //BUTTON_SetFocussable(hButton, 1);
+    //BUTTON_SetText(hButton, "Test");
+    
     /* Set progress bar font */
-    PROGBAR_SetFont(hProgbar, &GUI_Font8x16);
+    //PROGBAR_SetFont(hProgbar, &GUI_Font8x16);
 
-    PROGBAR_SetMinMax(hProgbar, 0, 59);
+    //PROGBAR_SetMinMax(hProgbar, 0, 59);
 
     /* Set progress bar text */
-    PROGBAR_SetText(hProgbar, "...");
-    /*char *string;
+    //PROGBAR_SetText(hProgbar, "...");
 
-    string="PQ PWM C.T. T.L. A.C. F.F.";
+    /*
+     * Touch Calibration from TOUCH_sample.c
+     */
+    /*GUI_PID_STATE TouchState;
+    int           xPhys;
+    int           yPhys;
 
-    lcdInit();
-
-    lcd_puts(string);*/
-
+    //GUI_Init();
+    GUI_CURSOR_Show();
+    GUI_CURSOR_Select(&GUI_CursorCrossL);
+    GUI_SetBkColor(GUI_WHITE);
+    GUI_SetColor(GUI_BLACK);
+    GUI_Clear();
+    GUI_DispString("Measurement of\nA/D converter values");*/
+    
     while(1)
     {
-        int tempSeconds;
-	char tempSecString[5];
+        /*
+         * Touch Calibration from TOUCH_sample.c
+         */
+        /*GUI_PID_GetCurrentState(&TouchState);  // Get the touch position in pixel
+        xPhys = GUI_TOUCH_GetxPhys();     // Get the A/D mesurement result in x
+        yPhys = GUI_TOUCH_GetyPhys();     // Get the A/D mesurement result in y
+        //
+        // Display the measurement result
+        //
+        GUI_SetColor(GUI_BLUE);
+        GUI_DispStringAt("Analog input:\n", 0, 20);
+        GUI_GotoY(GUI_GetDispPosY() + 2);
+        GUI_DispString("x:");
+        GUI_DispDec(xPhys, 4);
+        GUI_DispString(", y:");
+        GUI_DispDec(yPhys, 4);
+        //
+        // Display the according position
+        //
+        GUI_SetColor(GUI_RED);
+        GUI_GotoY(GUI_GetDispPosY() + 4);
+        GUI_DispString("\nPosition:\n");
+        GUI_GotoY(GUI_GetDispPosY() + 2);
+        GUI_DispString("x:");
+        GUI_DispDec(TouchState.x,4);
+        GUI_DispString(", y:");
+        GUI_DispDec(TouchState.y,4);
+        //
+        // Wait a while
+        //
+        GUI_Delay(50);*/
+        //int tempSeconds;
+	//char tempSecString[5];
 
-        printTime();
+        //printTime();
 
         GUI_PID_GetCurrentState(&pstate);
 
         GUI_SetFont(&GUI_Font8x16);
-
+        
+        /*if (BUTTON_IsPressed(hButton)){
+            BUTTON_SetText(hButton, "Pressed");
+        }
+        else {
+            BUTTON_SetText(hButton, "Test");
+        }*/
+        
         if (pstate.Pressed) {
             GUI_DispDecAt( pstate.x, 280,20,4);
             GUI_DispDecAt( pstate.y, 280,40,4);
@@ -204,12 +260,16 @@ int main(void)
         }
 
         //print progress bar displaying seconds
-        tempSeconds=myclockTimeStruct.RTC_Seconds;	//RTC_Seconds in BCD
-        tempSeconds=tempSeconds/16*10+tempSeconds%16;	//convert to decimal
-        sprintf(tempSecString, "%02d", tempSeconds);	//convert dec value to string
+        //tempSeconds=myclockTimeStruct.RTC_Seconds;	//RTC_Seconds in BCD
+        //tempSeconds=tempSeconds/16*10+tempSeconds%16;	//convert to decimal
+        //sprintf(tempSecString, "%02d", tempSeconds);	//convert dec value to string
 
-        PROGBAR_SetValue(hProgbar, tempSeconds);		//use dec value for bar position
-        PROGBAR_SetText(hProgbar, tempSecString);		//use string for value on progress bar
+        //PROGBAR_SetValue(hProgbar, tempSeconds);		//use dec value for bar position
+       // PROGBAR_SetText(hProgbar, tempSecString);		//use string for value on progress bar
+        //updateTouch();
+        /*if (WM_HasCaptured(hMenu)){
+            GUI_DispStringAt("Touched", 0, 100);
+        }*/
 
         GUI_Delay(50);
 /*
@@ -299,27 +359,7 @@ int main(void)
     	}
 
     	Delay(250000);
-*/
-   /*GPIO_SetBits(GREEN);
-    	 Delay(250);
-    	 GPIO_ResetBits(GREEN);
-    	 Delay(250);
-
-    	 GPIO_SetBits(ORANGE);
-    	 Delay(250);
-    	 GPIO_ResetBits(ORANGE);
-    	 Delay(250);
-
-    	 GPIO_SetBits(RED);
-    	 Delay(250);
-    	 GPIO_ResetBits(RED);
-    	 Delay(250);
-
-    	 GPIO_SetBits(BLUE);
-    	 Delay(250);
-    	 GPIO_ResetBits(BLUE);
-    	 Delay(250); */     
-        
+*/        
     }//END WHILE
 
 
@@ -327,9 +367,6 @@ int main(void)
 
 
 }
-
-
-
 
 
 void Delay(unsigned int nTime)
@@ -358,7 +395,6 @@ void SysTick_Handler(void) {
 	TimingDelay_Decrement();
 }
 */
-
 void TIM3_IRQHandler(void){
 
 
@@ -368,13 +404,13 @@ void TIM3_IRQHandler(void){
 	        TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 
 
-	if(index2<=800){
+	if(index2<=50){
 
 	PWMTIM3_InitOC4(lookup[index2]);
 
 	}
 
-	if(index2>=800){
+	if(index2>=50){
 
 	PWMTIM3_InitOC3(lookup[index2]);
 
@@ -384,7 +420,7 @@ void TIM3_IRQHandler(void){
 
 	index2++;
 
-	if(index2==1601){
+	if(index2==101){
 
 		index2=0;
 	}
@@ -419,5 +455,113 @@ void TIM3_IRQHandler(void){
   }
 }
 
+/*Menu Window Callback Override*/
+void cbMenu(WM_MESSAGE * pMsg) {
+    int NCode;
+    int Id;
+    // USER START (Optionally insert additional variables)
+    // USER END
 
+    switch (pMsg->MsgId) {
+        case WM_NOTIFY_PARENT:
+            Id    = WM_GetId(pMsg->hWinSrc);
+            NCode = pMsg->Data.v;
+            switch(Id) {
+                case GUI_ID_BUTTON0: // Notifications sent by 'Home Button'
+                    switch(NCode) {
+                        case WM_NOTIFICATION_CLICKED:
+                            GUI_DispStringAt("HOME   ", 0 , 100);
+                        break;
+                        case WM_NOTIFICATION_RELEASED:
+                            //BUTTON_SetPressed(hButtonHome, 0);
+                        break;
+                    }
+                    break;
+                case GUI_ID_BUTTON1: // Notifications sent by 'Battery Button'
+                    switch(NCode) {
+                        case WM_NOTIFICATION_CLICKED:
+                            GUI_DispStringAt("BATTERY", 0, 100);
+                            break;
+                        case WM_NOTIFICATION_RELEASED:
+                            
+                            break;
+                    }
+                    break;
+                case GUI_ID_BUTTON2: // Notifications sent by 'System Button'
+                    switch(NCode) {
+                        case WM_NOTIFICATION_CLICKED:
+                            GUI_DispStringAt("SYSTEM ", 0, 100);
+                            break;
+                        case WM_NOTIFICATION_RELEASED:
+                            
+                            break;
+                    }
+                    break;
+                case GUI_ID_BUTTON3: // Notifications sent by 'About Button'
+                    switch(NCode) {
+                        case WM_NOTIFICATION_CLICKED:
+                            GUI_DispStringAt("ABOUT  ", 0, 100);
+                            break;
+                        case WM_NOTIFICATION_RELEASED:
+                            
+                            break;
+                    }
+                    break;
+            }
+            break;
 
+        default:
+            WM_DefaultProc(pMsg);
+            break;
+    }
+}
+
+/**
+  * @brief  Provide the GUI with current state of the touch screen
+  * @param  None
+  * @retval None
+  * 
+  *  Modified from STemWin Sample Demo code - Taylor
+  */
+void updateTouch(void)
+{
+  GUI_PID_STATE TS_State;
+  static GUI_PID_STATE prev_state;
+  GUI_PID_STATE  ts;
+  uint16_t xDiff, yDiff;  
+  
+  GUI_PID_GetCurrentState(&ts);
+  
+  TS_State.Pressed = ts.Pressed;
+
+  xDiff = (prev_state.x > ts.x) ? (prev_state.x - ts.x) : (ts.x - prev_state.x);
+  yDiff = (prev_state.y > ts.y) ? (prev_state.y - ts.y) : (ts.y - prev_state.y);
+  
+  if((prev_state.Pressed != ts.Pressed )||
+     (xDiff > 3 )||
+       (yDiff > 3))
+  {
+    prev_state.Pressed = ts.Pressed;
+    
+    if((ts.x != 0) &&  (ts.y != 0)) 
+    {
+      prev_state.x = ts.x;
+      prev_state.y = ts.y;
+    }
+      
+    /*if(CALIBRATION_IsDone())
+    {
+      TS_State.Layer = 0;
+      TS_State.x = CALIBRATION_GetX (prev_state.X);
+      TS_State.y = CALIBRATION_GetY (prev_state.Y);
+    }
+    else
+    {*/
+      TS_State.Layer = 0;
+      TS_State.x = prev_state.x;
+      TS_State.y = prev_state.y;
+    //}
+    
+    GUI_TOUCH_StoreStateEx(&TS_State);
+  }
+}

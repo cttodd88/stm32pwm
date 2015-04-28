@@ -4,7 +4,7 @@
 unsigned short int X,Y;
 
 
-void GUI_TOUCH_X_ActivateX()
+/*void GUI_TOUCH_X_ActivateX()
 {
 
 }
@@ -12,7 +12,7 @@ void GUI_TOUCH_X_ActivateX()
 
 void GUI_TOUCH_X_ActivateY()
 {
-
+  
 }
 
 
@@ -33,5 +33,5 @@ int GUI_TOUCH_X_MeasureY()
 	  for(i=0;i<8;i++)
 	   	sum+=TPReadY();
 	  return sum>>3;
-}
+}*/
 

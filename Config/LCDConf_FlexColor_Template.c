@@ -391,7 +391,7 @@ void LCD_X_Config(void) {
      LCD_SetVSizeEx(0, XSIZE_PHYS, YSIZE_PHYS * NUM_VSCREENS);
    }
 
-#if (USE_TOUCH == 1)
+/*#if (USE_TOUCH == 1)
 
   	 pConfig.pfSendCmd = &pfSendCmd;
   	 pConfig.pfGetResult = &pfGetResult;
@@ -414,20 +414,20 @@ void LCD_X_Config(void) {
   	 pConfig.xPhys1 = TOUCH_BOTTOM;		// - yPhys1     : Physical AD value of vertical reference point 1.
 
 
-  	GUITDRV_ADS7846_Config(&pConfig);
+  	GUITDRV_ADS7846_Config(&pConfig);*/
     //
     // Set orientation of touch screen
     //
-    GUI_TOUCH_SetOrientation(DISPLAY_ORIENTATION);
+    //GUI_TOUCH_SetOrientation(DISPLAY_ORIENTATION);
 
     //
     // Calibrate touch screen
     //
-    GUI_TOUCH_Calibrate(GUI_COORD_X, 0, WIDTH  - 1, TOUCH_LEFT, TOUCH_RIGHT);
-    GUI_TOUCH_Calibrate(GUI_COORD_Y, 0, HEIGHT - 1, TOUCH_TOP,  TOUCH_BOTTOM);
+    //GUI_TOUCH_Calibrate(GUI_COORD_X, 0, WIDTH  - 1, TOUCH_LEFT, TOUCH_RIGHT);
+    //GUI_TOUCH_Calibrate(GUI_COORD_Y, 0, HEIGHT - 1, TOUCH_TOP,  TOUCH_BOTTOM);
 
 
-  #endif
+  //#endif
 }
 
 /*********************************************************************

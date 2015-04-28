@@ -253,7 +253,7 @@ u8 Read_Ads7846(void)
 					}while(t1);
 		 	 		  
 					Pen_Point.X=((databuffer[0][3]+databuffer[0][4]+databuffer[0][5])/3);
-					Pen_Point.Y=2047-((databuffer[1][3]+databuffer[1][4]+databuffer[1][5])/3);
+					Pen_Point.Y=((databuffer[1][3]+databuffer[1][4]+databuffer[1][5])/3); //taylor removed 2047 -
 					flag=1;
 					return 1;
 		}
@@ -295,8 +295,8 @@ void Convert_Pos(void)
 //	LastY = Pen_Point.Y0;
 
 
-	pstate.x = Pen_Point.X;
-	pstate.y = Pen_Point.Y;
+	pstate.x = (Pen_Point.X - 103) / 6;
+	pstate.y = (Pen_Point.Y) / 8.5;
 
 	if (GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_12))
 		pstate.Pressed = 0;				//pressed active lo
