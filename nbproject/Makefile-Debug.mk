@@ -35,6 +35,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/_ext/799909423/stm32f4xx_adc.o \
 	${OBJECTDIR}/cmsis_boot/startup/startup_stm32f4xx.o \
 	${OBJECTDIR}/cmsis_boot/system_stm32f4xx.o \
 	${OBJECTDIR}/cmsis_lib/source/misc.o \
@@ -43,7 +44,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/cmsis_lib/source/stm32f4xx_rcc.o \
 	${OBJECTDIR}/cmsis_lib/source/stm32f4xx_tim.o \
 	${OBJECTDIR}/lcd/lcd.o \
-	${OBJECTDIR}/main.o
+	${OBJECTDIR}/main.o \
+	${OBJECTDIR}/stdio/stdio.o
 
 
 # C Compiler Flags
@@ -69,6 +71,11 @@ LDLIBSOPTIONS=
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/stm32pwm: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/stm32pwm ${OBJECTFILES} ${LDLIBSOPTIONS} -mcpu=cortex-m4 -mthumb -g -nostartfiles -DSTM32F407VG -DSTM32F4XX -TSTM32F407VG_FLASH.ld -Wl,--gc-sections -g -o main.elf && arm-none-eabi-objcopy -Oihex main.elf main.hex
+
+${OBJECTDIR}/_ext/799909423/stm32f4xx_adc.o: ../stm32nbeans/cmsis_lib/source/stm32f4xx_adc.c 
+	${MKDIR} -p ${OBJECTDIR}/_ext/799909423
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/_ext/799909423/stm32f4xx_adc.o ../stm32nbeans/cmsis_lib/source/stm32f4xx_adc.c
 
 ${OBJECTDIR}/cmsis_boot/startup/startup_stm32f4xx.o: cmsis_boot/startup/startup_stm32f4xx.c 
 	${MKDIR} -p ${OBJECTDIR}/cmsis_boot/startup
@@ -114,6 +121,11 @@ ${OBJECTDIR}/main.o: main.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.c
+
+${OBJECTDIR}/stdio/stdio.o: stdio/stdio.c 
+	${MKDIR} -p ${OBJECTDIR}/stdio
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/stdio/stdio.o stdio/stdio.c
 
 # Subprojects
 .build-subprojects:

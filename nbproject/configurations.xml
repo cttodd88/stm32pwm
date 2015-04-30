@@ -26,6 +26,7 @@
       <logicalFolder name="cmsis_lib" displayName="cmsis_lib" projectFiles="true">
         <logicalFolder name="include" displayName="include" projectFiles="true">
           <itemPath>cmsis_lib/include/misc.h</itemPath>
+          <itemPath>cmsis_lib/include/stm32f4xx_adc.h</itemPath>
           <itemPath>cmsis_lib/include/stm32f4xx_gpio.h</itemPath>
           <itemPath>cmsis_lib/include/stm32f4xx_pwm.h</itemPath>
           <itemPath>cmsis_lib/include/stm32f4xx_rcc.h</itemPath>
@@ -33,6 +34,8 @@
         </logicalFolder>
         <logicalFolder name="source" displayName="source" projectFiles="true">
           <itemPath>cmsis_lib/source/misc.c</itemPath>
+          <itemPath>cmsis_lib/source/stm32f4xx_adc.c</itemPath>
+          <itemPath>../stm32nbeans/cmsis_lib/source/stm32f4xx_adc.c</itemPath>
           <itemPath>cmsis_lib/source/stm32f4xx_gpio.c</itemPath>
           <itemPath>cmsis_lib/source/stm32f4xx_pwm.c</itemPath>
           <itemPath>cmsis_lib/source/stm32f4xx_rcc.c</itemPath>
@@ -48,6 +51,18 @@
                    displayName="Source Files"
                    projectFiles="true">
       <itemPath>main.c</itemPath>
+      <itemPath>stdio/stdio.c</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -62,6 +77,10 @@
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
+    <Elem>cmsis</Elem>
+    <Elem>cmsis_boot</Elem>
+    <Elem>cmsis_lib</Elem>
+    <Elem>lcd</Elem>
     <Elem>cmsis</Elem>
     <Elem>cmsis_boot</Elem>
     <Elem>cmsis_lib</Elem>
@@ -83,6 +102,11 @@
           <commandLine>-mcpu=cortex-m4 -mthumb -g -nostartfiles -DSTM32F407VG -DSTM32F4XX -TSTM32F407VG_FLASH.ld -Wl,--gc-sections -g -o main.elf &amp;&amp; arm-none-eabi-objcopy -Oihex main.elf main.hex</commandLine>
         </linkerTool>
       </compileType>
+      <item path="../stm32nbeans/cmsis_lib/source/stm32f4xx_adc.c"
+            ex="false"
+            tool="0"
+            flavor2="0">
+      </item>
       <item path="cmsis/core_cm4.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="cmsis/core_cm4_simd.h" ex="false" tool="3" flavor2="0">
@@ -129,6 +153,8 @@
       <item path="lcd/lcd.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="stdio/stdio.c" ex="false" tool="0" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -151,6 +177,11 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="../stm32nbeans/cmsis_lib/source/stm32f4xx_adc.c"
+            ex="false"
+            tool="0"
+            flavor2="0">
+      </item>
       <item path="cmsis/core_cm4.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="cmsis/core_cm4_simd.h" ex="false" tool="3" flavor2="0">
@@ -197,6 +228,8 @@
       <item path="lcd/lcd.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="stdio/stdio.c" ex="false" tool="0" flavor2="0">
       </item>
     </conf>
   </confs>
