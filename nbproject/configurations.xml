@@ -26,6 +26,7 @@
       <logicalFolder name="cmsis_lib" displayName="cmsis_lib" projectFiles="true">
         <logicalFolder name="include" displayName="include" projectFiles="true">
           <itemPath>cmsis_lib/include/misc.h</itemPath>
+          <itemPath>cmsis_lib/include/stm32f4xx_adc.h</itemPath>
           <itemPath>cmsis_lib/include/stm32f4xx_gpio.h</itemPath>
           <itemPath>cmsis_lib/include/stm32f4xx_pwm.h</itemPath>
           <itemPath>cmsis_lib/include/stm32f4xx_rcc.h</itemPath>
@@ -33,6 +34,7 @@
         </logicalFolder>
         <logicalFolder name="source" displayName="source" projectFiles="true">
           <itemPath>cmsis_lib/source/misc.c</itemPath>
+          <itemPath>cmsis_lib/source/stm32f4xx_adc.c</itemPath>
           <itemPath>cmsis_lib/source/stm32f4xx_gpio.c</itemPath>
           <itemPath>cmsis_lib/source/stm32f4xx_pwm.c</itemPath>
           <itemPath>cmsis_lib/source/stm32f4xx_rcc.c</itemPath>
@@ -48,6 +50,7 @@
                    displayName="Source Files"
                    projectFiles="true">
       <itemPath>main.c</itemPath>
+      <itemPath>stdio/stdio.c</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -106,6 +109,8 @@
       </item>
       <item path="cmsis_lib/include/misc.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="cmsis_lib/include/stm32f4xx_adc.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="cmsis_lib/include/stm32f4xx_gpio.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="cmsis_lib/include/stm32f4xx_pwm.h" ex="false" tool="3" flavor2="0">
@@ -115,6 +120,8 @@
       <item path="cmsis_lib/include/stm32f4xx_tim.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="cmsis_lib/source/misc.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="cmsis_lib/source/stm32f4xx_adc.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="cmsis_lib/source/stm32f4xx_gpio.c" ex="false" tool="0" flavor2="0">
       </item>
@@ -129,6 +136,8 @@
       <item path="lcd/lcd.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="stdio/stdio.c" ex="false" tool="0" flavor2="0">
       </item>
     </conf>
     <conf name="Release" type="1">
@@ -174,6 +183,8 @@
       </item>
       <item path="cmsis_lib/include/misc.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="cmsis_lib/include/stm32f4xx_adc.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="cmsis_lib/include/stm32f4xx_gpio.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="cmsis_lib/include/stm32f4xx_pwm.h" ex="false" tool="3" flavor2="0">
@@ -183,6 +194,8 @@
       <item path="cmsis_lib/include/stm32f4xx_tim.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="cmsis_lib/source/misc.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="cmsis_lib/source/stm32f4xx_adc.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="cmsis_lib/source/stm32f4xx_gpio.c" ex="false" tool="0" flavor2="0">
       </item>
@@ -197,6 +210,8 @@
       <item path="lcd/lcd.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="stdio/stdio.c" ex="false" tool="0" flavor2="0">
       </item>
     </conf>
   </confs>

@@ -38,12 +38,14 @@ OBJECTFILES= \
 	${OBJECTDIR}/cmsis_boot/startup/startup_stm32f4xx.o \
 	${OBJECTDIR}/cmsis_boot/system_stm32f4xx.o \
 	${OBJECTDIR}/cmsis_lib/source/misc.o \
+	${OBJECTDIR}/cmsis_lib/source/stm32f4xx_adc.o \
 	${OBJECTDIR}/cmsis_lib/source/stm32f4xx_gpio.o \
 	${OBJECTDIR}/cmsis_lib/source/stm32f4xx_pwm.o \
 	${OBJECTDIR}/cmsis_lib/source/stm32f4xx_rcc.o \
 	${OBJECTDIR}/cmsis_lib/source/stm32f4xx_tim.o \
 	${OBJECTDIR}/lcd/lcd.o \
-	${OBJECTDIR}/main.o
+	${OBJECTDIR}/main.o \
+	${OBJECTDIR}/stdio/stdio.o
 
 
 # C Compiler Flags
@@ -85,6 +87,11 @@ ${OBJECTDIR}/cmsis_lib/source/misc.o: cmsis_lib/source/misc.c
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/cmsis_lib/source/misc.o cmsis_lib/source/misc.c
 
+${OBJECTDIR}/cmsis_lib/source/stm32f4xx_adc.o: cmsis_lib/source/stm32f4xx_adc.c 
+	${MKDIR} -p ${OBJECTDIR}/cmsis_lib/source
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/cmsis_lib/source/stm32f4xx_adc.o cmsis_lib/source/stm32f4xx_adc.c
+
 ${OBJECTDIR}/cmsis_lib/source/stm32f4xx_gpio.o: cmsis_lib/source/stm32f4xx_gpio.c 
 	${MKDIR} -p ${OBJECTDIR}/cmsis_lib/source
 	${RM} "$@.d"
@@ -114,6 +121,11 @@ ${OBJECTDIR}/main.o: main.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.c
+
+${OBJECTDIR}/stdio/stdio.o: stdio/stdio.c 
+	${MKDIR} -p ${OBJECTDIR}/stdio
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/stdio/stdio.o stdio/stdio.c
 
 # Subprojects
 .build-subprojects:

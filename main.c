@@ -5,16 +5,21 @@
 // Creation date: 3/10/2015
 // Last updated:
 
+
+#include <stdio.h>
 #include "cmsis_boot/stm32f4xx.h"
 #include "cmsis_lib/include/stm32f4xx_gpio.h"
 #include "cmsis_lib/include/stm32f4xx_rcc.h"
 #include "cmsis_lib/include/stm32f4xx_tim.h"
 #include "cmsis_lib/include/stm32f4xx_pwm.h"
 #include "cmsis_lib/include/misc.h"
+#include "cmsis_lib/include/stm32f4xx_adc.h"
 #include "lcd/lcd.h"
 
 
 /* Private typedef -----------------------------------------------------------*/
+ADC_InitTypeDef ADC_InitStructure;
+ADC_CommonInitTypeDef ADC_CommonInitStructure;
 GPIO_InitTypeDef  GPIO_InitStructure;
 NVIC_InitTypeDef nvicStructure;
 
@@ -26,7 +31,8 @@ NVIC_InitTypeDef nvicStructure;
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 unsigned int TimingDelay=0;
-
+unsigned int result=0;
+char adcString[10]={0};
 /* Private function prototypes -----------------------------------------------*/
 void Delay(unsigned int nTime);
 void TimingDelay_Decrement(void);
@@ -57,7 +63,7 @@ int main(void)
 	}
         
       
-
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC3,ENABLE);
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE, ENABLE);
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
@@ -68,39 +74,60 @@ int main(void)
          * 1/((1/60)/(steps))
          * For 50 steps we get 3 kHz
          * TIM_Period = 84000000 / 3000 - 1 = 27999
-         
-         
          */
 
-
-	period=13999;
-        
-        
-        
+	period=13999;     
 
 	genLookup(lookup,100,13999);
-
-	 /* Alternating functions for pins */
-	//PWM_TIMER_Init(220);  //40Khz 2083
+	
 	PWM_TIMER_Init3(period); //500 KHz 166
-	//PWM_TIMER_Init8(8399);
-    /*
+	
+        /*
 	PWM_InitOC1(83);
-    PWM_InitOC2(4199);
-    PWM_InitOC3(4199);
-    PWM_InitOC4(83);
+        PWM_InitOC2(4199);
+        PWM_InitOC3(4199);
+        PWM_InitOC4(83);
 	*/
-    //GPIO_PinAFConfig(GPIOD, GPIO_PinSource12, GPIO_AF_TIM4);
-   // GPIO_PinAFConfig(GPIOD, GPIO_PinSource13, GPIO_AF_TIM4);
-   // GPIO_PinAFConfig(GPIOD, GPIO_PinSource14, GPIO_AF_TIM4);
-    //GPIO_PinAFConfig(GPIOD, GPIO_PinSource15, GPIO_AF_TIM4);
+        
+        //ENABLE Alternate Pin Functions
 	GPIO_PinAFConfig(GPIOC, GPIO_PinSource8, GPIO_AF_TIM3);
 	GPIO_PinAFConfig(GPIOC, GPIO_PinSource9, GPIO_AF_TIM3);
-    //GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_TIM1);
-    /* Configure PD12, PD13, PD14 and PD15 in output pushpull mode */
+        
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
+        
+        
+          //Reset ADC configurations
+	ADC_DeInit();
 
+	//Initialize common ADC settings
+	ADC_CommonInitStructure.ADC_Mode = ADC_Mode_Independent;
+	ADC_CommonInitStructure.ADC_Prescaler = ADC_Prescaler_Div2;
+	ADC_CommonInitStructure.ADC_DMAAccessMode = ADC_DMAAccessMode_Disabled;
+	ADC_CommonInitStructure.ADC_TwoSamplingDelay = ADC_TwoSamplingDelay_5Cycles;
+	ADC_CommonInit(&ADC_CommonInitStructure);
 
-      GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8|GPIO_Pin_9;
+	//Initialize specific ADC settings
+	ADC_InitStructure.ADC_Resolution = ADC_Resolution_12b;
+	ADC_InitStructure.ADC_ScanConvMode = DISABLE;
+	ADC_InitStructure.ADC_ContinuousConvMode = ENABLE;
+	ADC_InitStructure.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None;
+	ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_T1_CC1;
+	ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
+	ADC_InitStructure.ADC_NbrOfConversion = 1;
+	ADC_Init(ADC3,&ADC_InitStructure);
+
+	ADC_RegularChannelConfig(ADC3,ADC_Channel_11,1,ADC_SampleTime_3Cycles);
+
+	ADC_Cmd(ADC3, ENABLE);
+	
+          
+     
+
+   
+          GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8|GPIO_Pin_9;
    	  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
    	  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
    	  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
@@ -125,10 +152,20 @@ int main(void)
 
 
 	  TIM_ITConfig(TIM3,TIM_IT_Update,ENABLE);
+          
 	  nvicStructure.NVIC_IRQChannel = TIM3_IRQn;
 	  nvicStructure.NVIC_IRQChannelPreemptionPriority = 0;
 	  nvicStructure.NVIC_IRQChannelSubPriority = 1;
 	  nvicStructure.NVIC_IRQChannelCmd = ENABLE;
+	  NVIC_Init(&nvicStructure);
+          
+          //Configure Nested Vector Interrupt Controller for ADC Interrupt
+
+          ADC_ITConfig(ADC3,ADC_IT_EOC,ENABLE);
+	  nvicStructure.NVIC_IRQChannel= ADC_IRQn;
+	  nvicStructure.NVIC_IRQChannelCmd= ENABLE;
+	  nvicStructure.NVIC_IRQChannelPreemptionPriority= 1;
+	  nvicStructure.NVIC_IRQChannelSubPriority= 2;
 	  NVIC_Init(&nvicStructure);
 
 
@@ -138,14 +175,14 @@ int main(void)
 
 	  lcdInit();
 
-	  lcd_puts(string);
+	  //lcd_puts(string);
 
-
+          ADC_SoftwareStartConv(ADC3);
 
     while(1)
     {
-
-
+        sprintf(adcString, "%d", result);
+        lcd_puts(adcString);
 
 /*
     	while(duty<=8399){
@@ -351,5 +388,18 @@ void TIM3_IRQHandler(void){
   }
 }
 
+void ADC_IRQHandler(void){
+   
+
+    while(!ADC_GetFlagStatus(ADC3, ADC_FLAG_EOC));
+   result=ADC_GetConversionValue(ADC3);
+ 
+    
+    
+    
+    
+  
+    
+}
 
 
