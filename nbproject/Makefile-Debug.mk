@@ -56,6 +56,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/lcd/lcd.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/rtc.o \
+	${OBJECTDIR}/sentinelLogo.o \
 	${OBJECTDIR}/syscalls/syscalls.o \
 	${OBJECTDIR}/user/GUI_X_Touch.o \
 	${OBJECTDIR}/user/LCD_STM32F4.o \
@@ -198,6 +199,11 @@ ${OBJECTDIR}/rtc.o: rtc.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/rtc.o rtc.c
+
+${OBJECTDIR}/sentinelLogo.o: sentinelLogo.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/sentinelLogo.o sentinelLogo.c
 
 ${OBJECTDIR}/syscalls/syscalls.o: syscalls/syscalls.c 
 	${MKDIR} -p ${OBJECTDIR}/syscalls

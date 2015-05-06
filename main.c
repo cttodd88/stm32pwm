@@ -24,6 +24,7 @@
 #include "user/ts.h"
 
 #include "rtc.h"
+#include "sentinelLogo.h"
 
 #include <stdlib.h>
 
@@ -41,12 +42,18 @@ TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 TIM_OCInitTypeDef  TIM_OCInitStructure;
 uint16_t CCR1_Val = 300;
 uint16_t CCR2_Val = 100;
+BUTTON_Handle hButtOutput;
+int currentScreen = 0;
 
 /* Private function prototypes -----------------------------------------------*/
 void Delay(unsigned int nTime);
 void TimingDelay_Decrement(void);
 void cbMenu(WM_MESSAGE * pMsg);
-void updateTouch(void);
+void drawHomeScreen(void);
+void drawBattScreen(void);
+void drawSysScreen(void);
+void drawAboutScreen(void);
+void updateDispValues(void);
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -59,16 +66,25 @@ extern GUI_PID_STATE pstate;
 int duty =0;
 int index2 = 0;
 int lookup[101]={0};
-BUTTON_Handle hButtonHome;
+WM_HWIN hScreen; // main screen window handle
+
+//measurement global variables for GUI
+float inVoltage = 30.2;
+float inCurrent = 1.34;
+float inPower = 40.468;
+float outVoltage = 119.98;
+float outCurrent = 2.8;
+float outPower = 335.944;
+float outFreq = 59.97;
 
 int main(void)
 {
     /*Variables*/
     int period = 13999;
-    WM_HWIN hMenu; // menu window handle
+    WM_HWIN hMenu; // menu window handle    
     
     // Button Handles
-    
+    BUTTON_Handle hButtonHome;
     BUTTON_Handle hButtonBatt;
     BUTTON_Handle hButtonSys;
     BUTTON_Handle hButtonAbout;
@@ -136,53 +152,64 @@ int main(void)
 
     //rtcConfig();
 
+    /*
+     * GUI Setup
+     */
     GUI_SetFont(&GUI_Font8x16);
     GUI_SetBkColor(GUI_BLACK);
     GUI_Clear();
     GUI_DispString("Sentinel Power");
-    //  GUI_DispString(GUI_GetVersionString());
-    GUI_DispString("\n\n\n");
     
+    // create window for menu
     hMenu = WM_CreateWindow(0, 190, 320, 50, WM_CF_SHOW, cbMenu, 0);
+    
+    // create main window
+    GUI_SetBkColor(GUI_DARKBLUE);
+    hScreen = WM_CreateWindow(0, 16, 320, 174, WM_CF_SHOW, WM_DefaultProc, 0);
+    WM_SelectWindow(hScreen);
+    GUI_Clear();
+    
+    /*
+     * Draw Menu
+     */
     WM_SelectWindow(hMenu);
+    
+    //Home button
     hButtonHome = BUTTON_CreateEx(0, 0, 80, 50, hMenu, WM_CF_SHOW, 0, GUI_ID_BUTTON0);
     BUTTON_SetFont(hButtonHome, &GUI_Font8x16);
     BUTTON_SetText(hButtonHome, "Home");
+    BUTTON_SetFocussable(hButtonHome, 0);
+    
+    //Battery button
     hButtonBatt = BUTTON_CreateEx(80, 0, 80, 50, hMenu, WM_CF_SHOW, 0, GUI_ID_BUTTON1);
     BUTTON_SetFont(hButtonBatt, &GUI_Font8x16);
     BUTTON_SetText(hButtonBatt, "Battery");
+    BUTTON_SetFocussable(hButtonBatt, 0);
+    
+    //System button
     hButtonSys = BUTTON_CreateEx(160, 0, 80, 50, hMenu, WM_CF_SHOW, 0, GUI_ID_BUTTON2);
     BUTTON_SetFont(hButtonSys, &GUI_Font8x16);
     BUTTON_SetText(hButtonSys, "System");
+    BUTTON_SetFocussable(hButtonSys, 0);
+    
+    //About button
     hButtonAbout = BUTTON_CreateEx(240, 0, 80, 50, hMenu, WM_CF_SHOW, 0, GUI_ID_BUTTON3);
     BUTTON_SetFont(hButtonAbout, &GUI_Font8x16);
     BUTTON_SetText(hButtonAbout, "About");
-    //BUTTON_SetPressed(hButtonBatt, 1);
-    //GUI_SetBkColor(GUI_RED);
+    BUTTON_SetFocussable(hButtonAbout, 0);
+    
+    BUTTON_SetDefaultSkin(BUTTON_SKIN_FLEX);
+    //HOME SCREEN: Output button
+    hButtOutput = BUTTON_CreateEx(160, 50, 80, 50, hScreen, WM_CF_HIDE | WM_CF_DISABLED, 0, GUI_ID_BUTTON4);
+    BUTTON_SetFont(hButtOutput, &GUI_Font8x16);
+    BUTTON_SetText(hButtOutput, "Output");
+    BUTTON_SetFocussable(hButtOutput, 0);
+    
     GUI_Clear();
-    WM_SelectWindow(WM_HBKWIN);
-    WM_SetFocus(hMenu);
     
-    WM_SetpfPollPID(updateTouch);
-    //GUI_SetBkColor(GUI_BLACK);
-    
-    //GUI_DrawGradientH(5, 150, 315, 235, 0x0000FF, 0x00FFFF);
-
-    //BUTTON_SetDefaultSkin(BUTTON_SKIN_FLEX); // Sets the default skin for new widgets
-
-    /* Create progress bar at location x = 10, y = 10, length = 219, height = 30 */
-    //hProgbar = PROGBAR_CreateEx(50, 180, 219, 30, 0, WM_CF_SHOW, 0, GUI_ID_PROGBAR0);
-    //hButton = BUTTON_CreateEx(50, 180, 150, 50, 0, WM_CF_SHOW, 0, GUI_ID_BUTTON0);
-    //BUTTON_SetFocussable(hButton, 1);
-    //BUTTON_SetText(hButton, "Test");
-    
-    /* Set progress bar font */
-    //PROGBAR_SetFont(hProgbar, &GUI_Font8x16);
-
-    //PROGBAR_SetMinMax(hProgbar, 0, 59);
-
-    /* Set progress bar text */
-    //PROGBAR_SetText(hProgbar, "...");
+    WM_SelectWindow(hScreen); // set the main drawing window
+    WM_SetFocus(hMenu); // give input focus to menu
+    drawHomeScreen(); // default menu selection
 
     /*
      * Touch Calibration from TOUCH_sample.c
@@ -198,6 +225,9 @@ int main(void)
     GUI_SetColor(GUI_BLACK);
     GUI_Clear();
     GUI_DispString("Measurement of\nA/D converter values");*/
+    /*
+     * END OF CALIBRATION CODE
+     */
     
     while(1)
     {
@@ -232,21 +262,15 @@ int main(void)
         // Wait a while
         //
         GUI_Delay(50);*/
-        //int tempSeconds;
-	//char tempSecString[5];
-
-        //printTime();
-
+        /*
+         * END OF CALIBRATION CODE
+         */
+        
+        // Debug Code
+        /*
         GUI_PID_GetCurrentState(&pstate);
 
         GUI_SetFont(&GUI_Font8x16);
-        
-        /*if (BUTTON_IsPressed(hButton)){
-            BUTTON_SetText(hButton, "Pressed");
-        }
-        else {
-            BUTTON_SetText(hButton, "Test");
-        }*/
         
         if (pstate.Pressed) {
             GUI_DispDecAt( pstate.x, 280,20,4);
@@ -257,19 +281,28 @@ int main(void)
             GUI_DispDecAt( 0, 280,20,4);
             GUI_DispDecAt( 0, 280,40,4);
             GUI_DispStringAt("- -", 280,60);
-        }
-
-        //print progress bar displaying seconds
-        //tempSeconds=myclockTimeStruct.RTC_Seconds;	//RTC_Seconds in BCD
-        //tempSeconds=tempSeconds/16*10+tempSeconds%16;	//convert to decimal
-        //sprintf(tempSecString, "%02d", tempSeconds);	//convert dec value to string
-
-        //PROGBAR_SetValue(hProgbar, tempSeconds);		//use dec value for bar position
-       // PROGBAR_SetText(hProgbar, tempSecString);		//use string for value on progress bar
-        //updateTouch();
-        /*if (WM_HasCaptured(hMenu)){
-            GUI_DispStringAt("Touched", 0, 100);
         }*/
+        /*switch(currentScreen){
+            case 0:
+                drawHomeScreen();
+                break;
+                
+            case 1:
+                drawBattScreen();
+                break;
+                
+            case 2:
+                drawSysScreen();
+                break;
+                
+            case 3:
+                drawAboutScreen();
+                break;
+                
+            default:
+                drawHomeScreen();
+        }*/
+        updateDispValues();
 
         GUI_Delay(50);
 /*
@@ -470,40 +503,48 @@ void cbMenu(WM_MESSAGE * pMsg) {
                 case GUI_ID_BUTTON0: // Notifications sent by 'Home Button'
                     switch(NCode) {
                         case WM_NOTIFICATION_CLICKED:
-                            GUI_DispStringAt("HOME   ", 0 , 100);
-                        break;
+                            //GUI_Clear();
+                            //GUI_DispStringAt("HOME", 0 , 100);
+                            break;
                         case WM_NOTIFICATION_RELEASED:
-                            //BUTTON_SetPressed(hButtonHome, 0);
-                        break;
+                            drawHomeScreen();
+                            currentScreen = 0;
+                            break;
                     }
                     break;
                 case GUI_ID_BUTTON1: // Notifications sent by 'Battery Button'
                     switch(NCode) {
                         case WM_NOTIFICATION_CLICKED:
-                            GUI_DispStringAt("BATTERY", 0, 100);
+                            //GUI_Clear();
+                            //GUI_DispStringAt("BATTERY", 0, 100);
                             break;
                         case WM_NOTIFICATION_RELEASED:
-                            
+                            drawBattScreen();
+                            currentScreen = 1;
                             break;
                     }
                     break;
                 case GUI_ID_BUTTON2: // Notifications sent by 'System Button'
                     switch(NCode) {
                         case WM_NOTIFICATION_CLICKED:
-                            GUI_DispStringAt("SYSTEM ", 0, 100);
+                            //GUI_Clear();
+                            //GUI_DispStringAt("SYSTEM", 0, 100);
                             break;
                         case WM_NOTIFICATION_RELEASED:
-                            
+                            drawSysScreen();
+                            currentScreen = 2;
                             break;
                     }
                     break;
                 case GUI_ID_BUTTON3: // Notifications sent by 'About Button'
                     switch(NCode) {
                         case WM_NOTIFICATION_CLICKED:
-                            GUI_DispStringAt("ABOUT  ", 0, 100);
+                            //GUI_Clear();
+                            //GUI_DispStringAt("ABOUT", 0, 100);
                             break;
                         case WM_NOTIFICATION_RELEASED:
-                            
+                            drawAboutScreen();
+                            currentScreen = 3;
                             break;
                     }
                     break;
@@ -516,52 +557,182 @@ void cbMenu(WM_MESSAGE * pMsg) {
     }
 }
 
-/**
-  * @brief  Provide the GUI with current state of the touch screen
-  * @param  None
-  * @retval None
-  * 
-  *  Modified from STemWin Sample Demo code - Taylor
-  */
-void updateTouch(void)
-{
-  GUI_PID_STATE TS_State;
-  static GUI_PID_STATE prev_state;
-  GUI_PID_STATE  ts;
-  uint16_t xDiff, yDiff;  
-  
-  GUI_PID_GetCurrentState(&ts);
-  
-  TS_State.Pressed = ts.Pressed;
+/*
+ * GUI SCREEN DRAWING FUNCTIONS
+ * ============================
+ */
 
-  xDiff = (prev_state.x > ts.x) ? (prev_state.x - ts.x) : (ts.x - prev_state.x);
-  yDiff = (prev_state.y > ts.y) ? (prev_state.y - ts.y) : (ts.y - prev_state.y);
-  
-  if((prev_state.Pressed != ts.Pressed )||
-     (xDiff > 3 )||
-       (yDiff > 3))
-  {
-    prev_state.Pressed = ts.Pressed;
+/*
+ * drawHomeScreen()
+ */
+void drawHomeScreen(void) {   
+    WM_SelectWindow(hScreen);
+    WM_ShowWindow(hButtOutput);
+    WM_EnableWindow(hButtOutput);
+    GUI_Clear();
     
-    if((ts.x != 0) &&  (ts.y != 0)) 
-    {
-      prev_state.x = ts.x;
-      prev_state.y = ts.y;
-    }
-      
-    /*if(CALIBRATION_IsDone())
-    {
-      TS_State.Layer = 0;
-      TS_State.x = CALIBRATION_GetX (prev_state.X);
-      TS_State.y = CALIBRATION_GetY (prev_state.Y);
-    }
-    else
-    {*/
-      TS_State.Layer = 0;
-      TS_State.x = prev_state.x;
-      TS_State.y = prev_state.y;
-    //}
+    GUI_SetColor(GUI_CYAN);
+    GUI_SetFont(&GUI_Font8x16);
+    GUI_GotoXY(0,16);
     
-    GUI_TOUCH_StoreStateEx(&TS_State);
-  }
+    GUI_DispString("DC Input: Detected \n\n");
+    GUI_DispString("Batteries: Detected\n\n");
+    GUI_DispString("Temperature: Good\n\n");
+    GUI_DispString("Output: Detected");
+        
+}
+
+/*
+ * drawSysScreen()
+ * desc: displays system sensor information
+ */
+void drawSysScreen(void) {
+    WM_SelectWindow(hScreen);
+    WM_HideWindow(hButtOutput);
+    WM_DisableWindow(hButtOutput);
+    GUI_Clear();
+    
+    // Input/Output dividing line
+    GUI_SetColor(GUI_DARKCYAN);    
+    GUI_FillRect(159, 4, 160, 113);
+    GUI_FillRect(3, 118, 316, 119);
+    
+    GUI_SetColor(GUI_CYAN);
+    GUI_SetFont(&GUI_Font8x16);
+    GUI_GotoXY(60,16);
+    GUI_DispString("INPUT");
+    GUI_GotoX(216);
+    GUI_DispString("OUTPUT\n\n");
+    
+    // Input Voltage
+    GUI_DispString("Voltage: ");
+    GUI_DispFloat(inVoltage, 6);
+    GUI_DispString(" V");
+    
+    // Output Voltage
+    GUI_GotoX(162);
+    GUI_DispString("Voltage: ");
+    GUI_DispFloat(outVoltage, 6);
+    GUI_DispString(" V\n");
+    
+    // Input Current
+    GUI_DispString("Current: ");
+    GUI_DispFloat(inCurrent, 6);
+    GUI_DispString(" A");
+    
+    // Output Current
+    GUI_GotoX(162);
+    GUI_DispString("Current: ");
+    GUI_DispFloat(outCurrent, 6);
+    GUI_DispString(" A\n");
+    
+    // Input Power
+    GUI_DispString("Power: ");
+    GUI_DispFloat(inPower, 6);
+    GUI_DispString(" W");
+    
+    // Output Power
+    GUI_GotoX(162);
+    GUI_DispString("Power: ");
+    GUI_DispFloat(outPower, 6);
+    GUI_DispString(" W\n");
+    
+    // Output Frequency
+    GUI_GotoX(162);
+    GUI_DispString("Frequency: ");
+    GUI_DispFloat(outFreq, 6);
+    GUI_DispString(" Hz\n\n");
+    
+    GUI_DispString("Temperature1: 50 C\n");
+    GUI_DispString("Temperature2: 50 C");
+    
+    // Set Back Color back to default
+    GUI_SetBkColor(GUI_DARKBLUE);
+}
+
+/*
+ * drawBattScreen()
+ */
+void drawBattScreen(void) {
+    WM_SelectWindow(hScreen);
+    WM_HideWindow(hButtOutput);
+    WM_DisableWindow(hButtOutput);
+    GUI_Clear();
+    
+    GUI_SetColor(GUI_CYAN);
+    GUI_SetFont(&GUI_Font8x16);
+    GUI_GotoXY(0,16);
+    
+    GUI_DispString("State: Charging\n");
+    GUI_DispString("Voltage: 24 V\n");
+    GUI_DispString("Current: 0.5 A\n\n");
+    GUI_DispString("Capacity Setting: 18 Ah");
+}
+
+/*
+ * drawAboutScreen()
+ * desc: display team logo and version info
+ */
+void drawAboutScreen(void) {
+    WM_SelectWindow(hScreen);
+    WM_HideWindow(hButtOutput);
+    WM_DisableWindow(hButtOutput);
+    GUI_Clear();
+    
+    GUI_DrawBitmap(&bmsentinelLogo, 12, 12);
+    
+    GUI_SetColor(GUI_CYAN);
+    GUI_SetFont(GUI_FONT_32B_ASCII);
+    
+    GUI_GotoXY(174, 12);
+    GUI_DispString("Sentinel\n");
+    GUI_GotoX(174);
+    GUI_DispString("Power\n");
+    GUI_SetFont(GUI_FONT_13B_ASCII);
+    GUI_GotoXY(174, 123);
+    GUI_DispString("Firmware Version 0.1");
+    
+    GUI_GotoXY(174, 149);
+    GUI_DispString("STemWin v");
+    GUI_DispString(GUI_GetVersionString());
+}
+
+/*
+ * updateDispValues()
+ */
+void updateDispValues(void){
+    switch(currentScreen){
+        case 0:
+            break;
+            
+        case 1:
+            break;
+            
+        case 2:
+            //system screen
+            //inputs
+            GUI_GotoXY(72,48);
+            GUI_DispFloat(inVoltage, 6);
+            GUI_GotoXY(72,64);
+            GUI_DispFloat(inCurrent, 6);
+            GUI_GotoXY(56,80);
+            GUI_DispFloat(inPower, 6);
+            //outputs
+            GUI_GotoXY(234,48);
+            GUI_DispFloat(outVoltage, 6);
+            GUI_GotoXY(234,64);
+            GUI_DispFloat(outCurrent, 6);
+            GUI_GotoXY(218,80);
+            GUI_DispFloat(outPower, 6);
+            GUI_GotoXY(250,96);
+            GUI_DispFloat(outFreq, 6);
+            break;
+        
+        case 3:
+            
+            break;
+            
+        default:
+            break;
+    }
 }
