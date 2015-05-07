@@ -161,7 +161,7 @@ int genLookup(int buff[], float steps, int period){
 
  }
 
- void PWMTIM3_InitOC4(int duty){
+void PWMTIM3_InitOC1(int duty){
 
 	 	 TIM_OCInitTypeDef TIM_OCStruct;
 
@@ -171,8 +171,24 @@ int genLookup(int buff[], float steps, int period){
 		 TIM_OCStruct.TIM_OCPolarity = TIM_OCPolarity_Low;
 
 		 TIM_OCStruct.TIM_Pulse = duty;
-		 TIM_OC4Init(TIM3, &TIM_OCStruct);
-		 TIM_OC4PreloadConfig(TIM3, TIM_OCPreload_Enable);
+		 TIM_OC1Init(TIM3, &TIM_OCStruct);
+		 TIM_OC1PreloadConfig(TIM3, TIM_OCPreload_Enable);
+
+
+ }
+
+void PWMTIM3_InitOC2(int duty){
+
+	 	 TIM_OCInitTypeDef TIM_OCStruct;
+
+
+		 TIM_OCStruct.TIM_OCMode = TIM_OCMode_PWM2;
+		 TIM_OCStruct.TIM_OutputState = TIM_OutputState_Enable;
+		 TIM_OCStruct.TIM_OCPolarity = TIM_OCPolarity_Low;
+
+		 TIM_OCStruct.TIM_Pulse = duty;
+		 TIM_OC2Init(TIM3, &TIM_OCStruct);
+		 TIM_OC2PreloadConfig(TIM3, TIM_OCPreload_Enable);
 
 
  }
@@ -193,4 +209,21 @@ int genLookup(int buff[], float steps, int period){
 
 
  }
+ 
+  void PWMTIM3_InitOC4(int duty){
 
+	 	 TIM_OCInitTypeDef TIM_OCStruct;
+
+
+		 TIM_OCStruct.TIM_OCMode = TIM_OCMode_PWM2;
+		 TIM_OCStruct.TIM_OutputState = TIM_OutputState_Enable;
+		 TIM_OCStruct.TIM_OCPolarity = TIM_OCPolarity_Low;
+
+		 TIM_OCStruct.TIM_Pulse = duty;
+		 TIM_OC4Init(TIM3, &TIM_OCStruct);
+		 TIM_OC4PreloadConfig(TIM3, TIM_OCPreload_Enable);
+
+
+ }
+
+ 

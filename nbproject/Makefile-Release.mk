@@ -39,12 +39,14 @@ OBJECTFILES= \
 	${OBJECTDIR}/cmsis_boot/system_stm32f4xx.o \
 	${OBJECTDIR}/cmsis_lib/source/misc.o \
 	${OBJECTDIR}/cmsis_lib/source/stm32f4xx_adc.o \
+	${OBJECTDIR}/cmsis_lib/source/stm32f4xx_dma.o \
 	${OBJECTDIR}/cmsis_lib/source/stm32f4xx_gpio.o \
 	${OBJECTDIR}/cmsis_lib/source/stm32f4xx_pwm.o \
 	${OBJECTDIR}/cmsis_lib/source/stm32f4xx_rcc.o \
 	${OBJECTDIR}/cmsis_lib/source/stm32f4xx_tim.o \
 	${OBJECTDIR}/lcd/lcd.o \
 	${OBJECTDIR}/main.o \
+	${OBJECTDIR}/sensor_init.o \
 	${OBJECTDIR}/stdio/stdio.o
 
 
@@ -92,6 +94,11 @@ ${OBJECTDIR}/cmsis_lib/source/stm32f4xx_adc.o: cmsis_lib/source/stm32f4xx_adc.c
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/cmsis_lib/source/stm32f4xx_adc.o cmsis_lib/source/stm32f4xx_adc.c
 
+${OBJECTDIR}/cmsis_lib/source/stm32f4xx_dma.o: cmsis_lib/source/stm32f4xx_dma.c 
+	${MKDIR} -p ${OBJECTDIR}/cmsis_lib/source
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/cmsis_lib/source/stm32f4xx_dma.o cmsis_lib/source/stm32f4xx_dma.c
+
 ${OBJECTDIR}/cmsis_lib/source/stm32f4xx_gpio.o: cmsis_lib/source/stm32f4xx_gpio.c 
 	${MKDIR} -p ${OBJECTDIR}/cmsis_lib/source
 	${RM} "$@.d"
@@ -121,6 +128,11 @@ ${OBJECTDIR}/main.o: main.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.c
+
+${OBJECTDIR}/sensor_init.o: sensor_init.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/sensor_init.o sensor_init.c
 
 ${OBJECTDIR}/stdio/stdio.o: stdio/stdio.c 
 	${MKDIR} -p ${OBJECTDIR}/stdio
