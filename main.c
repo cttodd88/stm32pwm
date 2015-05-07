@@ -22,9 +22,12 @@
 #include "user/stm32f4xx_it.h"
 #include "user/pwm.h"
 #include "user/ts.h"
+#include "delays.h"
 
 #include "rtc.h"
-#include "sentinelLogo.h"
+//#include "sentinelLogo.h"
+#include "img/sentinelLogo2.h"
+#include "img/sentinelLogoBW.h"
 
 #include <stdlib.h>
 
@@ -33,22 +36,45 @@ GPIO_InitTypeDef  GPIO_InitStructure;
 NVIC_InitTypeDef nvicStructure;
 
 /* Private define ------------------------------------------------------------*/
+typedef struct{
+    // inputs
+    float inVoltage;
+    float inCurrent;
+    float inPower;
+    // outputs
+    float outVoltage;
+    float outCurrent;
+    float outPower;
+    float outFreq;
+    // temperatures
+    float temp1;
+    float temp2;
+} SENSORS;
 
+#define DCFLAG 0x10
+#define BATTFLAG 0x08
+#define TEMPFLAG 0x04
+#define OUTFLAG 0x02
+#define ONFLAG 0x01
 /* Private macro -------------------------------------------------------------*/
 
 /* Private variables ---------------------------------------------------------*/
-unsigned int TimingDelay=0;
+//unsigned int TimingDelay=0;
 TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 TIM_OCInitTypeDef  TIM_OCInitStructure;
 uint16_t CCR1_Val = 300;
 uint16_t CCR2_Val = 100;
 BUTTON_Handle hButtOutput;
+BUTTON_Handle hButtCapacity;
+PROGBAR_Handle hChargeBar;
 int currentScreen = 0;
+unsigned char homeStatusFlg = DCFLAG | BATTFLAG;
 
 /* Private function prototypes -----------------------------------------------*/
 void Delay(unsigned int nTime);
 void TimingDelay_Decrement(void);
-void cbMenu(WM_MESSAGE * pMsg);
+SENSORS getMeasurement(void);
+void cbWindow(WM_MESSAGE * pMsg);
 void drawHomeScreen(void);
 void drawBattScreen(void);
 void drawSysScreen(void);
@@ -68,20 +94,11 @@ int index2 = 0;
 int lookup[101]={0};
 WM_HWIN hScreen; // main screen window handle
 
-//measurement global variables for GUI
-float inVoltage = 30.2;
-float inCurrent = 1.34;
-float inPower = 40.468;
-float outVoltage = 119.98;
-float outCurrent = 2.8;
-float outPower = 335.944;
-float outFreq = 59.97;
-
 int main(void)
 {
     /*Variables*/
     int period = 13999;
-    WM_HWIN hMenu; // menu window handle    
+    WM_HWIN hMenu; // menu window handle 
     
     // Button Handles
     BUTTON_Handle hButtonHome;
@@ -155,17 +172,24 @@ int main(void)
     /*
      * GUI Setup
      */
+    // Splash Screen
+    /*GUI_SetBkColor(GUI_WHITE);
+    GUI_Clear();
+    GUI_DrawBitmap(&bmSentinelLogoBW, 60,20);
+    DelayMs(2000);*/
+    
+    // Setup
     GUI_SetFont(&GUI_Font8x16);
     GUI_SetBkColor(GUI_BLACK);
     GUI_Clear();
     GUI_DispString("Sentinel Power");
     
     // create window for menu
-    hMenu = WM_CreateWindow(0, 190, 320, 50, WM_CF_SHOW, cbMenu, 0);
+    hMenu = WM_CreateWindow(0, 190, 320, 50, WM_CF_SHOW, cbWindow, 0);
     
     // create main window
     GUI_SetBkColor(GUI_DARKBLUE);
-    hScreen = WM_CreateWindow(0, 16, 320, 174, WM_CF_SHOW, WM_DefaultProc, 0);
+    hScreen = WM_CreateWindow(0, 16, 320, 174, WM_CF_SHOW, cbWindow, 0);
     WM_SelectWindow(hScreen);
     GUI_Clear();
     
@@ -200,10 +224,20 @@ int main(void)
     
     BUTTON_SetDefaultSkin(BUTTON_SKIN_FLEX);
     //HOME SCREEN: Output button
-    hButtOutput = BUTTON_CreateEx(160, 50, 80, 50, hScreen, WM_CF_HIDE | WM_CF_DISABLED, 0, GUI_ID_BUTTON4);
-    BUTTON_SetFont(hButtOutput, &GUI_Font8x16);
-    BUTTON_SetText(hButtOutput, "Output");
+    hButtOutput = BUTTON_CreateEx(180, 106, 116, 50, hScreen, WM_CF_HIDE | WM_CF_DISABLED, 0, GUI_ID_BUTTON4);
+    BUTTON_SetFont(hButtOutput, GUI_FONT_20B_ASCII);
+    BUTTON_SetText(hButtOutput, "OUTPUT");
     BUTTON_SetFocussable(hButtOutput, 0);
+    
+    //BATTERY SCREEN: Set Capacity
+    hButtCapacity = BUTTON_CreateEx(20, 120, 120, 30, hScreen, WM_CF_HIDE | WM_CF_DISABLED, 0, GUI_ID_BUTTON5);
+    BUTTON_SetFont(hButtCapacity, &GUI_Font8x16);
+    BUTTON_SetText(hButtCapacity, "Set Capacity");
+    BUTTON_SetFocussable(hButtCapacity, 0);
+    
+    hChargeBar = PROGBAR_CreateEx(215, 40, 50, 120, hScreen, WM_CF_HIDE, PROGBAR_CF_VERTICAL, GUI_ID_PROGBAR0);
+    PROGBAR_SetBarColor(hChargeBar, 0, GUI_DARKGREEN);
+    PROGBAR_SetBarColor(hChargeBar, 1, GUI_BLACK);    
     
     GUI_Clear();
     
@@ -488,8 +522,26 @@ void TIM3_IRQHandler(void){
   }
 }
 
-/*Menu Window Callback Override*/
-void cbMenu(WM_MESSAGE * pMsg) {
+/*
+ * getMeasurement()
+ */
+SENSORS getMeasurement(void) {
+    SENSORS measured;
+    measured.inVoltage = 30.2;
+    measured.inCurrent = 1.34;
+    measured.inPower = 40.468;
+    measured.outVoltage = 119.98;
+    measured.outCurrent = 2.8;
+    measured.outPower = 335.944;
+    measured.outFreq = 59.97;
+    measured.temp1 = 52.43;
+    measured.temp2 = 59.87;
+    
+    return measured;
+}
+
+/*Window Callback Override*/
+void cbWindow(WM_MESSAGE * pMsg) {
     int NCode;
     int Id;
     // USER START (Optionally insert additional variables)
@@ -507,8 +559,10 @@ void cbMenu(WM_MESSAGE * pMsg) {
                             //GUI_DispStringAt("HOME", 0 , 100);
                             break;
                         case WM_NOTIFICATION_RELEASED:
-                            drawHomeScreen();
-                            currentScreen = 0;
+                            if(currentScreen) {
+                                currentScreen = 0;
+                                drawHomeScreen();
+                            }                            
                             break;
                     }
                     break;
@@ -519,8 +573,10 @@ void cbMenu(WM_MESSAGE * pMsg) {
                             //GUI_DispStringAt("BATTERY", 0, 100);
                             break;
                         case WM_NOTIFICATION_RELEASED:
-                            drawBattScreen();
-                            currentScreen = 1;
+                            if(!(currentScreen == 1)) {
+                                currentScreen = 1;
+                                drawBattScreen();
+                            }
                             break;
                     }
                     break;
@@ -531,8 +587,10 @@ void cbMenu(WM_MESSAGE * pMsg) {
                             //GUI_DispStringAt("SYSTEM", 0, 100);
                             break;
                         case WM_NOTIFICATION_RELEASED:
-                            drawSysScreen();
-                            currentScreen = 2;
+                            if(!(currentScreen == 2)) {
+                                currentScreen = 2;
+                                drawSysScreen();
+                            }
                             break;
                     }
                     break;
@@ -543,8 +601,17 @@ void cbMenu(WM_MESSAGE * pMsg) {
                             //GUI_DispStringAt("ABOUT", 0, 100);
                             break;
                         case WM_NOTIFICATION_RELEASED:
-                            drawAboutScreen();
-                            currentScreen = 3;
+                            if(!(currentScreen == 3)){
+                                currentScreen = 3;
+                                drawAboutScreen();
+                            }
+                            break;
+                    }
+                    break;
+                case GUI_ID_BUTTON4: // Notifications sent by 'HOME:Output Button'
+                    switch(NCode) {
+                        case WM_NOTIFICATION_RELEASED:
+                            homeStatusFlg ^= ONFLAG;
                             break;
                     }
                     break;
@@ -569,17 +636,32 @@ void drawHomeScreen(void) {
     WM_SelectWindow(hScreen);
     WM_ShowWindow(hButtOutput);
     WM_EnableWindow(hButtOutput);
+    WM_HideWindow(hButtCapacity);
+    WM_DisableWindow(hButtCapacity);
+    WM_HideWindow(hChargeBar);
+    
     GUI_Clear();
+        
+    // indicator BG circles
+    GUI_SetColor(GUI_BLACK);
+    GUI_FillCircle(20,24,16); // DC Input
+    GUI_FillCircle(20,66,16); // Battery
+    GUI_FillCircle(20,108,16); // Temperature
+    GUI_FillCircle(20,150,16); // Existing Out
+    GUI_FillCircle(283,40,32); // On
+    GUI_FillCircle(192,40,32); // Off
+    
+    updateDispValues();    
     
     GUI_SetColor(GUI_CYAN);
     GUI_SetFont(&GUI_Font8x16);
-    GUI_GotoXY(0,16);
+    GUI_DispStringAt("DC Input", 44, 16);
+    GUI_DispStringAt("Battery", 44, 58);
+    GUI_DispStringAt("Temperature", 44, 100);
+    GUI_DispStringAt("Existing Out", 44, 142);
+    GUI_DispStringAt("ON", 276, 76);
+    GUI_DispStringAt("OFF", 181, 76);
     
-    GUI_DispString("DC Input: Detected \n\n");
-    GUI_DispString("Batteries: Detected\n\n");
-    GUI_DispString("Temperature: Good\n\n");
-    GUI_DispString("Output: Detected");
-        
 }
 
 /*
@@ -590,7 +672,12 @@ void drawSysScreen(void) {
     WM_SelectWindow(hScreen);
     WM_HideWindow(hButtOutput);
     WM_DisableWindow(hButtOutput);
+    WM_HideWindow(hButtCapacity);
+    WM_DisableWindow(hButtCapacity);
+    WM_HideWindow(hChargeBar);
     GUI_Clear();
+    
+    SENSORS meas = getMeasurement();
     
     // Input/Output dividing line
     GUI_SetColor(GUI_DARKCYAN);    
@@ -606,45 +693,54 @@ void drawSysScreen(void) {
     
     // Input Voltage
     GUI_DispString("Voltage: ");
-    GUI_DispFloat(inVoltage, 6);
+    GUI_DispFloat(meas.inVoltage, 6);
     GUI_DispString(" V");
     
     // Output Voltage
     GUI_GotoX(162);
     GUI_DispString("Voltage: ");
-    GUI_DispFloat(outVoltage, 6);
+    GUI_DispFloat(meas.outVoltage, 6);
     GUI_DispString(" V\n");
     
     // Input Current
     GUI_DispString("Current: ");
-    GUI_DispFloat(inCurrent, 6);
+    GUI_DispFloat(meas.inCurrent, 6);
     GUI_DispString(" A");
     
     // Output Current
     GUI_GotoX(162);
     GUI_DispString("Current: ");
-    GUI_DispFloat(outCurrent, 6);
+    GUI_DispFloat(meas.outCurrent, 6);
     GUI_DispString(" A\n");
     
     // Input Power
     GUI_DispString("Power: ");
-    GUI_DispFloat(inPower, 6);
+    GUI_DispFloat(meas.inPower, 6);
     GUI_DispString(" W");
     
     // Output Power
     GUI_GotoX(162);
     GUI_DispString("Power: ");
-    GUI_DispFloat(outPower, 6);
+    GUI_DispFloat(meas.outPower, 6);
     GUI_DispString(" W\n");
     
     // Output Frequency
     GUI_GotoX(162);
     GUI_DispString("Frequency: ");
-    GUI_DispFloat(outFreq, 6);
+    GUI_DispFloat(meas.outFreq, 6);
     GUI_DispString(" Hz\n\n");
     
-    GUI_DispString("Temperature1: 50 C\n");
-    GUI_DispString("Temperature2: 50 C");
+    // Temperature Readings
+    GUI_DispString("Temperature1: ");
+    GUI_DispFloat(meas.temp1, 6);
+    GUI_DispChar(' ');
+    GUI_DispChar(176); // degree sign
+    GUI_DispString("C\n");
+    GUI_DispString("Temperature2: ");
+    GUI_DispFloat(meas.temp2, 6);
+    GUI_DispChar(' ');
+    GUI_DispChar(176); // degree sign
+    GUI_DispChar('C');
     
     // Set Back Color back to default
     GUI_SetBkColor(GUI_DARKBLUE);
@@ -657,16 +753,23 @@ void drawBattScreen(void) {
     WM_SelectWindow(hScreen);
     WM_HideWindow(hButtOutput);
     WM_DisableWindow(hButtOutput);
+    WM_ShowWindow(hButtCapacity);
+    WM_EnableWindow(hButtCapacity);
+    WM_ShowWindow(hChargeBar);
     GUI_Clear();
+       
+    PROGBAR_SetValue(hChargeBar, 72);
+    GUI_DispStringAt("72%", 228, 16);    
     
     GUI_SetColor(GUI_CYAN);
     GUI_SetFont(&GUI_Font8x16);
-    GUI_GotoXY(0,16);
+    //GUI_GotoXY(0,16);
     
-    GUI_DispString("State: Charging\n");
+    GUI_DispStringAt("72%", 228, 16); 
+    GUI_DispStringAt("State: Charging\n", 0, 16);
     GUI_DispString("Voltage: 24 V\n");
     GUI_DispString("Current: 0.5 A\n\n");
-    GUI_DispString("Capacity Setting: 18 Ah");
+    GUI_DispString("Capacity: 18 Ah");
 }
 
 /*
@@ -677,9 +780,12 @@ void drawAboutScreen(void) {
     WM_SelectWindow(hScreen);
     WM_HideWindow(hButtOutput);
     WM_DisableWindow(hButtOutput);
+    WM_HideWindow(hButtCapacity);
+    WM_DisableWindow(hButtCapacity);
+    WM_HideWindow(hChargeBar);
     GUI_Clear();
     
-    GUI_DrawBitmap(&bmsentinelLogo, 12, 12);
+    GUI_DrawBitmap(&bmSentinelLogo2, 12, 12);
     
     GUI_SetColor(GUI_CYAN);
     GUI_SetFont(GUI_FONT_32B_ASCII);
@@ -698,38 +804,97 @@ void drawAboutScreen(void) {
 }
 
 /*
+ */
+void setBatteryCapacity(void) {
+    FRAMEWIN_Handle hFrame;
+    hFrame = FRAMEWIN_CreateEx(10, 10, 200, 100, hScreen, WM_CF_SHOW, 0, "Set Battery Capacity", NULL);
+}
+
+/*
  * updateDispValues()
  */
 void updateDispValues(void){
+    SENSORS m = getMeasurement();
+    
     switch(currentScreen){
         case 0:
+            // home screen
+            if(homeStatusFlg & DCFLAG) {
+                GUI_SetColor(GUI_GREEN);
+            }
+            else {
+                GUI_SetColor(GUI_RED);
+            }
+            GUI_FillCircle(20,24,12); // DC Input
+
+            if(homeStatusFlg & BATTFLAG) {
+                GUI_SetColor(GUI_GREEN);
+            }
+            else {
+                GUI_SetColor(GUI_RED);
+            }
+            GUI_FillCircle(20,66,12); // Battery
+
+            if(homeStatusFlg & TEMPFLAG) {
+                GUI_SetColor(GUI_GREEN);
+            }
+            else {
+                GUI_SetColor(GUI_RED);
+            }
+            GUI_FillCircle(20,108,12); // Temperature
+
+            if(homeStatusFlg & OUTFLAG) {
+                GUI_SetColor(GUI_GREEN);
+            }
+            else {
+                GUI_SetColor(GUI_DARKGRAY);
+            }
+            GUI_FillCircle(20,150,12); // Existing Out
+
+            if(homeStatusFlg & ONFLAG) {
+                GUI_SetColor(GUI_GREEN);
+                GUI_FillCircle(283,40,27); // On
+                GUI_SetColor(GUI_DARKGRAY);
+                GUI_FillCircle(192,40,27); // Off
+            } else {
+                GUI_SetColor(GUI_DARKGRAY);
+                GUI_FillCircle(283,40,27); // On
+                GUI_SetColor(GUI_RED);
+                GUI_FillCircle(192,40,27); // Off
+            }
             break;
             
         case 1:
             break;
             
         case 2:
-            //system screen
-            //inputs
+            // system screen
+            // inputs
             GUI_GotoXY(72,48);
-            GUI_DispFloat(inVoltage, 6);
+            GUI_DispFloat(m.inVoltage, 6);
             GUI_GotoXY(72,64);
-            GUI_DispFloat(inCurrent, 6);
+            GUI_DispFloat(m.inCurrent, 6);
             GUI_GotoXY(56,80);
-            GUI_DispFloat(inPower, 6);
-            //outputs
+            GUI_DispFloat(m.inPower, 6);
+            // outputs
             GUI_GotoXY(234,48);
-            GUI_DispFloat(outVoltage, 6);
+            GUI_DispFloat(m.outVoltage, 6);
             GUI_GotoXY(234,64);
-            GUI_DispFloat(outCurrent, 6);
+            GUI_DispFloat(m.outCurrent, 6);
             GUI_GotoXY(218,80);
-            GUI_DispFloat(outPower, 6);
+            GUI_DispFloat(m.outPower, 6);
             GUI_GotoXY(250,96);
-            GUI_DispFloat(outFreq, 6);
+            GUI_DispFloat(m.outFreq, 6);
+            // temperatures
+            GUI_GotoXY(112,128);
+            GUI_DispFloat(m.temp1, 6);
+            GUI_GotoXY(112,144);
+            GUI_DispFloat(m.temp2, 6);
             break;
         
         case 3:
-            
+            // about screen
+            // nothing to update
             break;
             
         default:

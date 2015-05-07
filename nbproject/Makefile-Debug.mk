@@ -53,6 +53,9 @@ OBJECTFILES= \
 	${OBJECTDIR}/cmsis_lib/source/stm32f4xx_syscfg.o \
 	${OBJECTDIR}/cmsis_lib/source/stm32f4xx_tim.o \
 	${OBJECTDIR}/delays.o \
+	${OBJECTDIR}/img/sentinelLogo1.o \
+	${OBJECTDIR}/img/sentinelLogo2.o \
+	${OBJECTDIR}/img/sentinelLogoBW.o \
 	${OBJECTDIR}/lcd/lcd.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/rtc.o \
@@ -184,6 +187,21 @@ ${OBJECTDIR}/delays.o: delays.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/delays.o delays.c
+
+${OBJECTDIR}/img/sentinelLogo1.o: img/sentinelLogo1.c 
+	${MKDIR} -p ${OBJECTDIR}/img
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/img/sentinelLogo1.o img/sentinelLogo1.c
+
+${OBJECTDIR}/img/sentinelLogo2.o: img/sentinelLogo2.c 
+	${MKDIR} -p ${OBJECTDIR}/img
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/img/sentinelLogo2.o img/sentinelLogo2.c
+
+${OBJECTDIR}/img/sentinelLogoBW.o: img/sentinelLogoBW.c 
+	${MKDIR} -p ${OBJECTDIR}/img
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/img/sentinelLogoBW.o img/sentinelLogoBW.c
 
 ${OBJECTDIR}/lcd/lcd.o: lcd/lcd.c 
 	${MKDIR} -p ${OBJECTDIR}/lcd

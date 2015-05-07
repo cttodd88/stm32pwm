@@ -7,6 +7,9 @@
       <itemPath>delays.h</itemPath>
       <itemPath>rtc.h</itemPath>
       <itemPath>sentinelLogo.h</itemPath>
+      <itemPath>img/sentinelLogo1.h</itemPath>
+      <itemPath>img/sentinelLogo2.h</itemPath>
+      <itemPath>img/sentinelLogoBW.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -194,6 +197,9 @@
       <itemPath>main.c</itemPath>
       <itemPath>rtc.c</itemPath>
       <itemPath>sentinelLogo.c</itemPath>
+      <itemPath>img/sentinelLogo1.c</itemPath>
+      <itemPath>img/sentinelLogo2.c</itemPath>
+      <itemPath>img/sentinelLogoBW.c</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -334,6 +340,18 @@
       <item path="delays.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="delays.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="img/sentinelLogo1.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="img/sentinelLogo1.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="img/sentinelLogo2.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="img/sentinelLogo2.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="img/sentinelLogoBW.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="img/sentinelLogoBW.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="inc/BUTTON.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -686,6 +704,18 @@
       <item path="delays.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="delays.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="img/sentinelLogo1.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="img/sentinelLogo1.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="img/sentinelLogo2.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="img/sentinelLogo2.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="img/sentinelLogoBW.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="img/sentinelLogoBW.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="inc/BUTTON.h" ex="false" tool="3" flavor2="0">
       </item>
