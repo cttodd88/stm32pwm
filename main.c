@@ -5,6 +5,8 @@
 // Creation date: 3/10/2015
 // Last updated: 4/27/2015 - Taylor Long
 // Description: Integrated Display code with PWM code
+// Modified: 5/12/2015 - Taylor Long
+// Description: GUI Initial Implementation completed
 
 #include "cmsis_boot/stm32f4xx.h"
 #include "cmsis_lib/include/stm32f4xx_gpio.h"
@@ -51,11 +53,20 @@ typedef struct{
     float temp2;
 } SENSORS;
 
+typedef struct{
+    int state;
+    int voltage;
+    float current;
+    int chargeLevel;
+} BATTINFO;
+
 #define DCFLAG 0x10
 #define BATTFLAG 0x08
 #define TEMPFLAG 0x04
 #define OUTFLAG 0x02
 #define ONFLAG 0x01
+
+#define GUI_ID_FRAMEWIN0 GUI_ID_USER + 1
 /* Private macro -------------------------------------------------------------*/
 
 /* Private variables ---------------------------------------------------------*/
@@ -64,22 +75,30 @@ TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
 TIM_OCInitTypeDef  TIM_OCInitStructure;
 uint16_t CCR1_Val = 300;
 uint16_t CCR2_Val = 100;
+WM_HWIN hScreen; // main screen window handle
 BUTTON_Handle hButtOutput;
 BUTTON_Handle hButtCapacity;
 PROGBAR_Handle hChargeBar;
-int currentScreen = 0;
+FRAMEWIN_Handle hFrame;
+SPINBOX_Handle hSpin;
+int currentScreen = 0; // tracks current screen
+int batteryCap = 18; // battery capacity in Ah
 unsigned char homeStatusFlg = DCFLAG | BATTFLAG;
 
 /* Private function prototypes -----------------------------------------------*/
 void Delay(unsigned int nTime);
 void TimingDelay_Decrement(void);
 SENSORS getMeasurement(void);
+BATTINFO getBattMeas(void);
 void cbWindow(WM_MESSAGE * pMsg);
+void cbFrame(WM_MESSAGE * pMsg);
 void drawHomeScreen(void);
 void drawBattScreen(void);
 void drawSysScreen(void);
 void drawAboutScreen(void);
 void updateDispValues(void);
+void drawBatteryCapacity(void);
+void setBatteryCapacity(void);
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -92,19 +111,20 @@ extern GUI_PID_STATE pstate;
 int duty =0;
 int index2 = 0;
 int lookup[101]={0};
-WM_HWIN hScreen; // main screen window handle
 
 int main(void)
 {
     /*Variables*/
     int period = 13999;
-    WM_HWIN hMenu; // menu window handle 
-    
+    WM_HWIN hMenu; // menu window handle
+    WM_HWIN hChild; // frame content window handle
+        
     // Button Handles
     BUTTON_Handle hButtonHome;
     BUTTON_Handle hButtonBatt;
     BUTTON_Handle hButtonSys;
     BUTTON_Handle hButtonAbout;
+    BUTTON_Handle hButtOK;
     
     /*Initialization*/
     
@@ -239,6 +259,26 @@ int main(void)
     PROGBAR_SetBarColor(hChargeBar, 0, GUI_DARKGREEN);
     PROGBAR_SetBarColor(hChargeBar, 1, GUI_BLACK);    
     
+    /*
+     * Frame Window for user input of battery capacity
+     */
+    hFrame = FRAMEWIN_CreateEx(10, 10, 120, 125, hScreen, WM_CF_HIDE, 0, GUI_ID_FRAMEWIN0, 
+            "Set Battery Capacity", cbWindow);
+    
+    hChild = WM_GetClientWindow(hFrame);
+    WM_SetCallback((hChild), cbFrame);
+    
+    hSpin = SPINBOX_CreateEx(0,0, WM_GetWindowSizeX(hChild),
+            50, hChild, WM_CF_SHOW, GUI_ID_SPINBOX0, 1, 200);
+    SPINBOX_SetFont(hSpin, GUI_FONT_32B_ASCII);
+    SPINBOX_SetValue(hSpin, batteryCap);
+    
+    hButtOK = BUTTON_CreateEx(20 - FRAMEWIN_GetBorderSize(hFrame), 60, 80, 40,
+            hChild, WM_CF_SHOW, 0, GUI_ID_BUTTON6);
+    BUTTON_SetFont(hButtOK, &GUI_Font8x16);
+    BUTTON_SetText(hButtOK, "OK");
+    BUTTON_SetFocussable(hButtOK, 0);
+    
     GUI_Clear();
     
     WM_SelectWindow(hScreen); // set the main drawing window
@@ -316,26 +356,7 @@ int main(void)
             GUI_DispDecAt( 0, 280,40,4);
             GUI_DispStringAt("- -", 280,60);
         }*/
-        /*switch(currentScreen){
-            case 0:
-                drawHomeScreen();
-                break;
-                
-            case 1:
-                drawBattScreen();
-                break;
-                
-            case 2:
-                drawSysScreen();
-                break;
-                
-            case 3:
-                drawAboutScreen();
-                break;
-                
-            default:
-                drawHomeScreen();
-        }*/
+        
         updateDispValues();
 
         GUI_Delay(50);
@@ -524,6 +545,7 @@ void TIM3_IRQHandler(void){
 
 /*
  * getMeasurement()
+ * Will get information from sensors and other measurements
  */
 SENSORS getMeasurement(void) {
     SENSORS measured;
@@ -538,6 +560,19 @@ SENSORS getMeasurement(void) {
     measured.temp2 = 59.87;
     
     return measured;
+}
+/*
+ * getBattMeas()
+ * Contains the battery information from sensors
+ */
+BATTINFO getBattMeas(void) {
+    BATTINFO meas;
+    meas.voltage = 24;
+    meas.current = 0.5;
+    meas.state = 1;
+    meas.chargeLevel = 72;
+    
+    return meas;
 }
 
 /*Window Callback Override*/
@@ -615,6 +650,13 @@ void cbWindow(WM_MESSAGE * pMsg) {
                             break;
                     }
                     break;
+                case GUI_ID_BUTTON5: // Notifications sent by 'BATT: Set Battery Capacity'
+                    switch(NCode) {
+                        case WM_NOTIFICATION_RELEASED:
+                            drawBatteryCapacity();
+                            break;
+                    }
+                    break;
             }
             break;
 
@@ -624,6 +666,33 @@ void cbWindow(WM_MESSAGE * pMsg) {
     }
 }
 
+/*Frame Callback Override*/
+void cbFrame(WM_MESSAGE * pMsg) {
+    int Id;
+    int NCode;
+    
+    switch (pMsg->MsgId) {
+        case WM_PAINT:
+            GUI_SetBkColor(0xc0c0c0); // default frame color from API document
+            GUI_Clear();
+            break;
+        case WM_NOTIFY_PARENT:
+            Id    = WM_GetId(pMsg->hWinSrc);
+            NCode = pMsg->Data.v;
+            switch(Id) {
+                case GUI_ID_BUTTON6:
+                        switch(NCode) {
+                            case WM_NOTIFICATION_RELEASED:
+                                setBatteryCapacity();
+                                break;
+                        }
+                        break;
+            }
+            break;
+        default:
+            WM_DefaultProc(pMsg);
+  }
+}
 /*
  * GUI SCREEN DRAWING FUNCTIONS
  * ============================
@@ -639,6 +708,7 @@ void drawHomeScreen(void) {
     WM_HideWindow(hButtCapacity);
     WM_DisableWindow(hButtCapacity);
     WM_HideWindow(hChargeBar);
+    WM_HideWindow(hFrame);
     
     GUI_Clear();
         
@@ -651,7 +721,7 @@ void drawHomeScreen(void) {
     GUI_FillCircle(283,40,32); // On
     GUI_FillCircle(192,40,32); // Off
     
-    updateDispValues();    
+    updateDispValues(); // display current status indicators 
     
     GUI_SetColor(GUI_CYAN);
     GUI_SetFont(&GUI_Font8x16);
@@ -675,6 +745,7 @@ void drawSysScreen(void) {
     WM_HideWindow(hButtCapacity);
     WM_DisableWindow(hButtCapacity);
     WM_HideWindow(hChargeBar);
+    WM_HideWindow(hFrame);
     GUI_Clear();
     
     SENSORS meas = getMeasurement();
@@ -757,19 +828,35 @@ void drawBattScreen(void) {
     WM_EnableWindow(hButtCapacity);
     WM_ShowWindow(hChargeBar);
     GUI_Clear();
+    
+    BATTINFO m = getBattMeas();
        
-    PROGBAR_SetValue(hChargeBar, 72);
-    GUI_DispStringAt("72%", 228, 16);    
+    PROGBAR_SetValue(hChargeBar, m.chargeLevel);
+    //GUI_DispStringAt("72%", 228, 16);    
     
     GUI_SetColor(GUI_CYAN);
     GUI_SetFont(&GUI_Font8x16);
     //GUI_GotoXY(0,16);
     
-    GUI_DispStringAt("72%", 228, 16); 
-    GUI_DispStringAt("State: Charging\n", 0, 16);
-    GUI_DispString("Voltage: 24 V\n");
-    GUI_DispString("Current: 0.5 A\n\n");
-    GUI_DispString("Capacity: 18 Ah");
+    GUI_GotoXY(228, 16);
+    GUI_DispDec(m.chargeLevel, 2);
+    GUI_DispChar('%');
+    //GUI_DispStringAt("72%", 228, 16);
+    if(m.state){
+        GUI_DispStringAt("State: Charging\n", 0, 16);
+    }
+    else {
+        GUI_DispStringAt("State: Discharging\n", 0, 16);
+    }
+    GUI_DispString("Voltage: ");
+    GUI_DispDec(m.voltage, 2);
+    GUI_DispString(" V\n");
+    GUI_DispString("Current: ");
+    GUI_DispFloat(m.current, 3);
+    GUI_DispString(" A\n\n");
+    GUI_DispString("Capacity: ");
+    GUI_DispDec(batteryCap, 2);
+    GUI_DispString(" Ah");
 }
 
 /*
@@ -783,6 +870,7 @@ void drawAboutScreen(void) {
     WM_HideWindow(hButtCapacity);
     WM_DisableWindow(hButtCapacity);
     WM_HideWindow(hChargeBar);
+    WM_HideWindow(hFrame);
     GUI_Clear();
     
     GUI_DrawBitmap(&bmSentinelLogo2, 12, 12);
@@ -804,17 +892,38 @@ void drawAboutScreen(void) {
 }
 
 /*
+ * drawBatteryCapacity()
+ * Shows the frame for user input of battery capacity
+ */
+void drawBatteryCapacity(void) {
+    WM_DisableWindow(hButtCapacity);
+    SPINBOX_SetValue(hSpin, batteryCap);
+    WM_SelectWindow(hFrame);
+    WM_ShowWindow(hFrame);
+    WM_SetFocus(hFrame);
+}
+
+/*
+ * setBatteryCapacity()
+ * Writes the input value to the variable and hides the input frame
  */
 void setBatteryCapacity(void) {
-    FRAMEWIN_Handle hFrame;
-    hFrame = FRAMEWIN_CreateEx(10, 10, 200, 100, hScreen, WM_CF_SHOW, 0, "Set Battery Capacity", NULL);
+    batteryCap = SPINBOX_GetValue(hSpin);
+    WM_SelectWindow(hScreen);
+    WM_HideWindow(hFrame);
+    WM_HideWindow(hButtCapacity);
+    
+    GUI_Clear();
+    drawBattScreen();
 }
 
 /*
  * updateDispValues()
+ * Refreshes current screen with updated values
  */
 void updateDispValues(void){
     SENSORS m = getMeasurement();
+    BATTINFO b = getBattMeas(); 
     
     switch(currentScreen){
         case 0:
@@ -865,6 +974,24 @@ void updateDispValues(void){
             break;
             
         case 1:
+            // battery screen
+            WM_SelectWindow(hScreen);
+            
+            GUI_GotoXY(228,16);
+            GUI_DispDec(b.chargeLevel, 2);
+            GUI_GotoXY(56,16);
+            if(b.state) {
+                GUI_DispString("Charging   ");
+            }
+            else {
+                GUI_DispString("Discharging");
+            }
+            GUI_GotoXY(72,32);
+            GUI_DispDec(b.voltage, 2);
+            GUI_GotoXY(72,48);
+            GUI_DispFloat(b.current, 3);
+            GUI_GotoXY(80,80);
+            GUI_DispDec(batteryCap, 2);
             break;
             
         case 2:
