@@ -12,6 +12,10 @@
             <file>file:/home/elex/NetBeansProjects/stm32pwm/inc/WM.h</file>
             <file>file:/home/elex/NetBeansProjects/stm32pwm/inc/PROGBAR.h</file>
             <file>file:/home/elex/NetBeansProjects/stm32pwm/inc/FRAMEWIN.h</file>
+            <file>file:/home/elex/git/stm32pwm/sensor_init.c</file>
+            <file>file:/home/elex/git/stm32pwm/sensor_init.h</file>
+            <file>file:/home/elex/git/stm32pwm/main.c</file>
+            <file>file:/home/elex/git/stm32pwm/cmsis_lib/source/stm32f4xx_pwm.c</file>
         </group>
     </open-files>
 </project-private>
