@@ -42,6 +42,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/cmsis_boot/startup/startup_stm32f4xx.o \
 	${OBJECTDIR}/cmsis_boot/system_stm32f4xx.o \
 	${OBJECTDIR}/cmsis_lib/source/misc.o \
+	${OBJECTDIR}/cmsis_lib/source/stm32f4xx_adc.o \
+	${OBJECTDIR}/cmsis_lib/source/stm32f4xx_dma.o \
 	${OBJECTDIR}/cmsis_lib/source/stm32f4xx_exti.o \
 	${OBJECTDIR}/cmsis_lib/source/stm32f4xx_fsmc.o \
 	${OBJECTDIR}/cmsis_lib/source/stm32f4xx_gpio.o \
@@ -59,6 +61,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/lcd/lcd.o \
 	${OBJECTDIR}/main.o \
 	${OBJECTDIR}/rtc.o \
+	${OBJECTDIR}/sensor_init.o \
 	${OBJECTDIR}/sentinelLogo.o \
 	${OBJECTDIR}/syscalls/syscalls.o \
 	${OBJECTDIR}/user/GUI_X_Touch.o \
@@ -132,6 +135,16 @@ ${OBJECTDIR}/cmsis_lib/source/misc.o: cmsis_lib/source/misc.c
 	${MKDIR} -p ${OBJECTDIR}/cmsis_lib/source
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/cmsis_lib/source/misc.o cmsis_lib/source/misc.c
+
+${OBJECTDIR}/cmsis_lib/source/stm32f4xx_adc.o: cmsis_lib/source/stm32f4xx_adc.c 
+	${MKDIR} -p ${OBJECTDIR}/cmsis_lib/source
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/cmsis_lib/source/stm32f4xx_adc.o cmsis_lib/source/stm32f4xx_adc.c
+
+${OBJECTDIR}/cmsis_lib/source/stm32f4xx_dma.o: cmsis_lib/source/stm32f4xx_dma.c 
+	${MKDIR} -p ${OBJECTDIR}/cmsis_lib/source
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/cmsis_lib/source/stm32f4xx_dma.o cmsis_lib/source/stm32f4xx_dma.c
 
 ${OBJECTDIR}/cmsis_lib/source/stm32f4xx_exti.o: cmsis_lib/source/stm32f4xx_exti.c 
 	${MKDIR} -p ${OBJECTDIR}/cmsis_lib/source
@@ -217,6 +230,11 @@ ${OBJECTDIR}/rtc.o: rtc.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/rtc.o rtc.c
+
+${OBJECTDIR}/sensor_init.o: sensor_init.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/sensor_init.o sensor_init.c
 
 ${OBJECTDIR}/sentinelLogo.o: sentinelLogo.c 
 	${MKDIR} -p ${OBJECTDIR}

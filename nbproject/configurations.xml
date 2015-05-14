@@ -6,6 +6,7 @@
                    projectFiles="true">
       <itemPath>delays.h</itemPath>
       <itemPath>rtc.h</itemPath>
+      <itemPath>sensor_init.h</itemPath>
       <itemPath>sentinelLogo.h</itemPath>
       <itemPath>img/sentinelLogo1.h</itemPath>
       <itemPath>img/sentinelLogo2.h</itemPath>
@@ -32,6 +33,8 @@
       <logicalFolder name="cmsis_lib" displayName="cmsis_lib" projectFiles="true">
         <logicalFolder name="include" displayName="include" projectFiles="true">
           <itemPath>cmsis_lib/include/misc.h</itemPath>
+          <itemPath>cmsis_lib/include/stm32f4xx_adc.h</itemPath>
+          <itemPath>cmsis_lib/include/stm32f4xx_dma.h</itemPath>
           <itemPath>cmsis_lib/include/stm32f4xx_exti.h</itemPath>
           <itemPath>cmsis_lib/include/stm32f4xx_fsmc.h</itemPath>
           <itemPath>cmsis_lib/include/stm32f4xx_gpio.h</itemPath>
@@ -45,6 +48,8 @@
         </logicalFolder>
         <logicalFolder name="source" displayName="source" projectFiles="true">
           <itemPath>cmsis_lib/source/misc.c</itemPath>
+          <itemPath>cmsis_lib/source/stm32f4xx_adc.c</itemPath>
+          <itemPath>cmsis_lib/source/stm32f4xx_dma.c</itemPath>
           <itemPath>cmsis_lib/source/stm32f4xx_exti.c</itemPath>
           <itemPath>cmsis_lib/source/stm32f4xx_fsmc.c</itemPath>
           <itemPath>cmsis_lib/source/stm32f4xx_gpio.c</itemPath>
@@ -196,6 +201,7 @@
       <itemPath>delays.c</itemPath>
       <itemPath>main.c</itemPath>
       <itemPath>rtc.c</itemPath>
+      <itemPath>sensor_init.c</itemPath>
       <itemPath>sentinelLogo.c</itemPath>
       <itemPath>img/sentinelLogo1.c</itemPath>
       <itemPath>img/sentinelLogo2.c</itemPath>
@@ -289,6 +295,10 @@
       </item>
       <item path="cmsis_lib/include/misc.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="cmsis_lib/include/stm32f4xx_adc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis_lib/include/stm32f4xx_dma.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="cmsis_lib/include/stm32f4xx_exti.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="cmsis_lib/include/stm32f4xx_fsmc.h" ex="false" tool="3" flavor2="0">
@@ -313,6 +323,10 @@
       <item path="cmsis_lib/include/stm32f4xx_tim.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="cmsis_lib/source/misc.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="cmsis_lib/source/stm32f4xx_adc.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="cmsis_lib/source/stm32f4xx_dma.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="cmsis_lib/source/stm32f4xx_exti.c" ex="false" tool="0" flavor2="0">
       </item>
@@ -556,6 +570,10 @@
       <item path="rtc.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="rtc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="sensor_init.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="sensor_init.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="sentinelLogo.c" ex="false" tool="0" flavor2="0">
       </item>
@@ -653,6 +671,10 @@
       </item>
       <item path="cmsis_lib/include/misc.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="cmsis_lib/include/stm32f4xx_adc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="cmsis_lib/include/stm32f4xx_dma.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="cmsis_lib/include/stm32f4xx_exti.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="cmsis_lib/include/stm32f4xx_fsmc.h" ex="false" tool="3" flavor2="0">
@@ -677,6 +699,10 @@
       <item path="cmsis_lib/include/stm32f4xx_tim.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="cmsis_lib/source/misc.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="cmsis_lib/source/stm32f4xx_adc.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="cmsis_lib/source/stm32f4xx_dma.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="cmsis_lib/source/stm32f4xx_exti.c" ex="false" tool="0" flavor2="0">
       </item>
@@ -920,6 +946,10 @@
       <item path="rtc.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="rtc.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="sensor_init.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="sensor_init.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="sentinelLogo.c" ex="false" tool="0" flavor2="0">
       </item>

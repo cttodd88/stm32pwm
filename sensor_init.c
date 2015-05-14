@@ -33,7 +33,7 @@ void GPIO_init(void){
      //ENABLE Alternate Pin Functions
 	GPIO_PinAFConfig(GPIOC, GPIO_PinSource8, GPIO_AF_TIM3);
 	GPIO_PinAFConfig(GPIOC, GPIO_PinSource9, GPIO_AF_TIM3);
-        GPIO_PinAFConfig(GPIOC, GPIO_PinSource6, GPIO_AF_TIM3);
+        //GPIO_PinAFConfig(GPIOC, GPIO_PinSource6, GPIO_AF_TIM3);
         GPIO_PinAFConfig(GPIOC, GPIO_PinSource7, GPIO_AF_TIM3);
      //Configure GPIO
         
@@ -44,13 +44,14 @@ void GPIO_init(void){
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
         
         //PWM Channels
-        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6|GPIO_Pin_7|GPIO_Pin_8|GPIO_Pin_9;
+        GPIO_InitStructure.GPIO_Pin = /*GPIO_Pin_6|*/GPIO_Pin_7|GPIO_Pin_8|GPIO_Pin_9;
    	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
    	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
    	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
    	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
    	GPIO_Init(GPIOC, &GPIO_InitStructure);
 
+/*
         //LED's (to be used by display)
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12|GPIO_Pin_13|GPIO_Pin_14|GPIO_Pin_15;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
@@ -65,6 +66,7 @@ void GPIO_init(void){
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_Init(GPIOE, &GPIO_InitStructure);
+*/
 
         
     
