@@ -248,6 +248,7 @@
           <linkerLibItems>
             <linkerLibFileItem>Lib/libSTemWin526_CM4_GCC.a</linkerLibFileItem>
             <linkerLibFileItem>Lib/libSTemWin526_CM4_GCC_ot.a</linkerLibFileItem>
+            <linkerLibLibItem>m</linkerLibLibItem>
           </linkerLibItems>
           <commandLine>-mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -g -nostartfiles -DSTM32F407VG -DSTM32F4XX -TSTM32F407VG_FLASH.ld -Wl,--gc-sections -g -o main.elf &amp;&amp; arm-none-eabi-objcopy -Oihex main.elf main.hex</commandLine>
         </linkerTool>

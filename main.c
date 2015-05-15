@@ -9,6 +9,7 @@
 // Description: GUI Initial Implementation completed
 
 #include <stdio.h>
+#include <math.h>
 #include "cmsis_boot/stm32f4xx.h"
 #include "cmsis_lib/include/stm32f4xx_gpio.h"
 #include "cmsis_lib/include/stm32f4xx_rcc.h"
@@ -77,6 +78,7 @@ typedef struct{
 } BATTINFO;
 
 #define ADC3_DR_ADDRESS ((uint32_t)0x4001224C)
+#define ADC2_DR_ADDRESS ((uint32_t)0x4001214C)
 
 #define DCFLAG 0x10
 #define BATTFLAG 0x08
@@ -107,10 +109,12 @@ int batteryCap = 18; // battery capacity in Ah
 unsigned char homeStatusFlg = DCFLAG | BATTFLAG;
 
 volatile uint16_t ADC3ConvertedValue[2];
+volatile uint16_t ADC2ConvertedValue[5000];
 
 /* Private function prototypes -----------------------------------------------*/
 void Delay(unsigned int nTime);
-float convertTemp(int t);
+float convertTemp(int t); // move to separate file
+float convertVAC(volatile uint16_t *adc2Val, int size, int chan); // move to separate file
 void TimingDelay_Decrement(void);
 SENSORS getMeasurement(void);
 BATTINFO getBattMeas(void);
@@ -202,6 +206,14 @@ int main(void)
     DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
     DMA_Init(DMA2_Stream0, &DMA_InitStructure);
     DMA_Cmd(DMA2_Stream0, ENABLE);
+    
+    DMA_DeInit(DMA2_Stream2);
+    DMA_InitStructure.DMA_Channel = DMA_Channel_1;
+    DMA_InitStructure.DMA_BufferSize = 5000;
+    DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)ADC2_DR_ADDRESS;
+    DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)&ADC2ConvertedValue[0];
+    DMA_Init(DMA2_Stream2, &DMA_InitStructure);
+    DMA_Cmd(DMA2_Stream2, ENABLE);
     
     //DMA_init();
         
@@ -342,6 +354,10 @@ int main(void)
     ADC_ContinuousModeCmd(ADC3,ENABLE);
 
     ADC_SoftwareStartConv(ADC3);
+    
+    ADC_ContinuousModeCmd(ADC2,ENABLE);
+
+    ADC_SoftwareStartConv(ADC2);
     
     while(1)
     {
@@ -491,7 +507,7 @@ void TIM3_IRQHandler(void){
   }
 }
 
-void ADC_IRQHandler(void){
+/*void ADC_IRQHandler(void){
    
 
     while(!ADC_GetFlagStatus(ADC3, ADC_FLAG_EOC));
@@ -503,7 +519,7 @@ void ADC_IRQHandler(void){
     
   
     
-}
+}*/
 
 float convertTemp(int t) {
     float temperature = 0;
@@ -512,6 +528,25 @@ float convertTemp(int t) {
     temperature = (temperature - 32) / 1.8; // F to C
     
     return temperature;
+}
+
+float convertVAC(volatile uint16_t *adc2Val, int size, int chan) {
+    int i = 0;
+    float newVoltage = 0;
+    float vSqrd = 0;
+    float vrms = 0;
+    
+    adc2Val = adc2Val + chan; // starting index
+    for(i = 0; i < size; i++) {
+        newVoltage = *adc2Val * 0.000732421;
+        vSqrd = vSqrd + (newVoltage * newVoltage);
+        
+        adc2Val += 2; // skip an index
+    }
+    
+    vrms = sqrt(vSqrd/size);
+    
+    return vrms;
 }
 
 /*
@@ -523,7 +558,7 @@ SENSORS getMeasurement(void) {
     measured.inVoltage = 30.2;
     measured.inCurrent = 1.34;
     measured.inPower = 40.468;
-    measured.outVoltage = 119.98;
+    measured.outVoltage = convertVAC(&ADC2ConvertedValue[0], 2500, 0); //119.98;
     measured.outCurrent = 2.8;
     measured.outPower = 335.944;
     measured.outFreq = 59.97;

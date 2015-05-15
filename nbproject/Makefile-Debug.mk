@@ -87,7 +87,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=Lib/libSTemWin526_CM4_GCC.a Lib/libSTemWin526_CM4_GCC_ot.a
+LDLIBSOPTIONS=Lib/libSTemWin526_CM4_GCC.a Lib/libSTemWin526_CM4_GCC_ot.a -lm
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}

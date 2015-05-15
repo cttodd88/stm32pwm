@@ -25,9 +25,11 @@ void GPIO_init(void){
     //ENABLE Peripheral Clocks
     
         RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC3,ENABLE);
+        RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC2, ENABLE);
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE, ENABLE);
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
+        RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
         RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2, ENABLE);
     
      //ENABLE Alternate Pin Functions
@@ -42,6 +44,10 @@ void GPIO_init(void){
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
+        
+        //ADC2 Channel 2&3
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2 | GPIO_Pin_3;
+        GPIO_Init(GPIOA, &GPIO_InitStructure);
         
         //PWM Channels
         GPIO_InitStructure.GPIO_Pin = /*GPIO_Pin_6|*/GPIO_Pin_7|GPIO_Pin_8|GPIO_Pin_9;
@@ -94,17 +100,28 @@ void GPIO_init(void){
 	ADC_InitStructure.ADC_NbrOfConversion = 2;
 	ADC_Init(ADC3,&ADC_InitStructure);
         
+        ADC_Init(ADC2,&ADC_InitStructure);
+        
         ADC_RegularChannelConfig(ADC3,ADC_Channel_10,1,ADC_SampleTime_3Cycles);
 	ADC_RegularChannelConfig(ADC3,ADC_Channel_11,2,ADC_SampleTime_3Cycles);
         //ADC_RegularChannelConfig(ADC3,ADC_Channel_12,3,ADC_SampleTime_3Cycles);
         //ADC_RegularChannelConfig(ADC3,ADC_Channel_13,4,ADC_SampleTime_3Cycles);
         
+        ADC_RegularChannelConfig(ADC2,ADC_Channel_2,1,ADC_SampleTime_480Cycles);
+        ADC_RegularChannelConfig(ADC2,ADC_Channel_3,2,ADC_SampleTime_480Cycles);
+        
         ADC_DMARequestAfterLastTransferCmd(ADC3, ENABLE);
+        ADC_DMARequestAfterLastTransferCmd(ADC2, ENABLE);
 
 	/* Enable ADC3 DMA */
 	ADC_DMACmd(ADC3, ENABLE);
-
+        
 	ADC_Cmd(ADC3, ENABLE);
+        
+        /* Enable ADC2 DMA */
+        ADC_DMACmd(ADC2, ENABLE);
+
+	ADC_Cmd(ADC2, ENABLE);
      
      
      
