@@ -40,7 +40,7 @@ void GPIO_init(void){
      //Configure GPIO
         
         //ADC3 Channel 11
-        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1|GPIO_Pin_2|GPIO_Pin_3;
+        GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1|GPIO_Pin_2;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
@@ -102,9 +102,9 @@ void GPIO_init(void){
         
         ADC_Init(ADC2,&ADC_InitStructure);
         
-        ADC_RegularChannelConfig(ADC3,ADC_Channel_10,1,ADC_SampleTime_3Cycles);
-	ADC_RegularChannelConfig(ADC3,ADC_Channel_11,2,ADC_SampleTime_3Cycles);
-        //ADC_RegularChannelConfig(ADC3,ADC_Channel_12,3,ADC_SampleTime_3Cycles);
+        //ADC_RegularChannelConfig(ADC3,ADC_Channel_10,1,ADC_SampleTime_3Cycles);
+	ADC_RegularChannelConfig(ADC3,ADC_Channel_11,1,ADC_SampleTime_3Cycles);
+        ADC_RegularChannelConfig(ADC3,ADC_Channel_12,2,ADC_SampleTime_3Cycles);
         //ADC_RegularChannelConfig(ADC3,ADC_Channel_13,4,ADC_SampleTime_3Cycles);
         
         ADC_RegularChannelConfig(ADC2,ADC_Channel_2,1,ADC_SampleTime_480Cycles);

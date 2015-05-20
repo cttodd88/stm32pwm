@@ -20,6 +20,7 @@
 #include "cmsis_lib/include/stm32f4xx_dma.h"
 #include "cmsis_lib/include/stm32f4xx_adc.h"
 #include "sensor_init.h"
+#include "measurements.h"
 
 #include "inc/GUI.h"
 #include "inc/DIALOG.h"
@@ -56,21 +57,6 @@ int16_t channel_12 ;
 } ADCValues_t;
 
 typedef struct{
-    // inputs
-    float inVoltage;
-    float inCurrent;
-    float inPower;
-    // outputs
-    float outVoltage;
-    float outCurrent;
-    float outPower;
-    float outFreq;
-    // temperatures
-    float temp1;
-    float temp2;
-} SENSORS;
-
-typedef struct{
     int state;
     int voltage;
     float current;
@@ -79,6 +65,8 @@ typedef struct{
 
 #define ADC3_DR_ADDRESS ((uint32_t)0x4001224C)
 #define ADC2_DR_ADDRESS ((uint32_t)0x4001214C)
+
+#define ADC2BUFFER 5000
 
 #define DCFLAG 0x10
 #define BATTFLAG 0x08
@@ -113,8 +101,6 @@ volatile uint16_t ADC2ConvertedValue[5000];
 
 /* Private function prototypes -----------------------------------------------*/
 void Delay(unsigned int nTime);
-float convertTemp(int t); // move to separate file
-float convertVAC(volatile uint16_t *adc2Val, int size, int chan); // move to separate file
 void TimingDelay_Decrement(void);
 SENSORS getMeasurement(void);
 BATTINFO getBattMeas(void);
@@ -147,6 +133,7 @@ int lookup[101]={0};
 int main(void)
 {
     /*Variables*/
+    int updateDly = 0;
     int period = 13999;
     WM_HWIN hMenu; // menu window handle
     WM_HWIN hChild; // frame content window handle
@@ -209,7 +196,7 @@ int main(void)
     
     DMA_DeInit(DMA2_Stream2);
     DMA_InitStructure.DMA_Channel = DMA_Channel_1;
-    DMA_InitStructure.DMA_BufferSize = 5000;
+    DMA_InitStructure.DMA_BufferSize = ADC2BUFFER;
     DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)ADC2_DR_ADDRESS;
     DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)&ADC2ConvertedValue[0];
     DMA_Init(DMA2_Stream2, &DMA_InitStructure);
@@ -412,8 +399,11 @@ int main(void)
             GUI_DispDecAt( 0, 280,40,4);
             GUI_DispStringAt("- -", 280,60);
         }*/
-        
-        updateDispValues();
+        //if(updateDly>4){
+            updateDispValues();
+            //updateDly = 0;
+        //}
+        //updateDly++;
 
         GUI_Delay(50);
     
@@ -521,47 +511,32 @@ void TIM3_IRQHandler(void){
     
 }*/
 
-float convertTemp(int t) {
-    float temperature = 0;
-    
-    temperature = (t * 0.0732421); // ADC conversion to F
-    temperature = (temperature - 32) / 1.8; // F to C
-    
-    return temperature;
-}
-
-float convertVAC(volatile uint16_t *adc2Val, int size, int chan) {
-    int i = 0;
-    float newVoltage = 0;
-    float vSqrd = 0;
-    float vrms = 0;
-    
-    adc2Val = adc2Val + chan; // starting index
-    for(i = 0; i < size; i++) {
-        newVoltage = *adc2Val * 0.000732421;
-        vSqrd = vSqrd + (newVoltage * newVoltage);
-        
-        adc2Val += 2; // skip an index
-    }
-    
-    vrms = sqrt(vSqrd/size);
-    
-    return vrms;
-}
-
 /*
  * getMeasurement()
  * Will get information from sensors and other measurements
  */
 SENSORS getMeasurement(void) {
+    static int callCount = 0;
+    static float freqSum = 0;
     SENSORS measured;
+    SENSORS output = measureOutput(ADC2ConvertedValue,ADC2BUFFER,0,2);
+    
+    callCount++;
+    
+    if(callCount > 1000) {
+        freqSum = output.outFreq;
+        callCount = 1;
+    } else {
+        freqSum += output.outFreq;
+    }
+  
     measured.inVoltage = 30.2;
     measured.inCurrent = 1.34;
     measured.inPower = 40.468;
-    measured.outVoltage = convertVAC(&ADC2ConvertedValue[0], 2500, 0); //119.98;
+    measured.outVoltage = output.outVoltage; //119.98;
     measured.outCurrent = 2.8;
     measured.outPower = 335.944;
-    measured.outFreq = 59.97;
+    measured.outFreq = freqSum/callCount; //59.97;
     measured.temp1 = convertTemp(ADC3ConvertedValue[0]); //52.43;
     measured.temp2 = convertTemp(ADC3ConvertedValue[1]); //59.87;
     

@@ -60,6 +60,7 @@ OBJECTFILES= \
 	${OBJECTDIR}/img/sentinelLogoBW.o \
 	${OBJECTDIR}/lcd/lcd.o \
 	${OBJECTDIR}/main.o \
+	${OBJECTDIR}/measurements.o \
 	${OBJECTDIR}/rtc.o \
 	${OBJECTDIR}/sensor_init.o \
 	${OBJECTDIR}/sentinelLogo.o \
@@ -221,6 +222,11 @@ ${OBJECTDIR}/main.o: main.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.c
+
+${OBJECTDIR}/measurements.o: measurements.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -O2 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/measurements.o measurements.c
 
 ${OBJECTDIR}/rtc.o: rtc.c 
 	${MKDIR} -p ${OBJECTDIR}
