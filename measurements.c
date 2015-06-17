@@ -22,52 +22,75 @@ float convertTemp(int t) {
  * offset = Starting index of desired ADC2 channel
  * numChan = Number of channels enabled on ADC2
  */
-SENSORS measureOutput(volatile uint16_t adc2Val[], int size, int offset, int numChan) {
+SENSORS measureOutput(volatile uint16_t adc2Val[], int size) {
     SENSORS out;
     int i = 0;
     int transition1 = 0;
     int transition2 = 0;
-    //float dcOffset = getOffsetDC(adc2Val,size,offset,numChan);
     float voltage = 0;
     float vSqrd = 0;
     float vrms = 0;
     float period = 0;
-    //float preVoltage = (adc2Val[i+offset] * 0.000732421);
-    char triggered = 0;
+    char triggered1 = 1;
+    char triggered2 = 1;
+    char chanSelect = 0;
+    char outTransition = 0;
     
-    for(i = 0 + offset; i < size; i += numChan) {
+    for(i = 0; i < size; i++) {
         voltage = adc2Val[i] * 0.000732421;
         
-        vSqrd = vSqrd + (voltage * voltage);
-        
+        if(!chanSelect) {
+            vSqrd = vSqrd + (voltage * voltage);
+        }
+                
         // check for transition and rising edge
         if(voltage > 2) {
-            if(!triggered){
-                triggered = 1;
+            if(!triggered1 && !chanSelect){
+                triggered1 = 1;
                 if(!transition1) {
                     transition1 = i; // index of first transition
-                }
-                else if(transition1 && !transition2) {
+                } else if(transition1 && !transition2) {
                     transition2 = i; // index of second transition
                 }
+            } else if(!triggered2 && !outTransition && chanSelect) {
+                triggered2 = 1;
+                outTransition = i;
             }
         } else if(voltage < 1) {
-            triggered = 0;
+            if(!chanSelect) {
+                triggered1 = 0;
+            } else {
+                triggered2 = 0;
+            }           
         }
         //preVoltage = newVoltage; // track previous voltage
+        
+        //toggle channel
+        chanSelect ^= 0x01;
     }
     
-    vrms = sqrt(vSqrd/(size/numChan));
+    vrms = sqrt(vSqrd/(size/2));
     out.outVoltage = vrms;
     
     // calculate the period based on signal sample rate
     if(!transition1 || !transition2) {
         out.outFreq = 0;
     } else {
-        period = ((transition2 - transition1)/numChan) * 0.0000205;
-        out.outFreq = 1/period;
+        period = ((transition2 - transition1)/2) * 26.5; //0.0000205;
+        out.outFreq = 1000000/period;
     }    
-       
+    
+    if((transition1 < (outTransition - 1)) && outTransition) {
+        out.outLagLead = 0x02; // leading
+        out.delay = outTransition - transition1;
+    } else if ((transition1 > (outTransition - 1)) && outTransition) {
+        out.outLagLead = 0x01; // lagging
+        out.delay = (transition1 - outTransition) * 26.5; // us
+    } else {
+        out.outLagLead = 0; // in phase
+        out.delay = 0;
+    }
+    
     return out;
 }
 

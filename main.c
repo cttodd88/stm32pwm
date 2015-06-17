@@ -133,7 +133,7 @@ int lookup[101]={0};
 int main(void)
 {
     /*Variables*/
-    int updateDly = 0;
+    //int updateDly = 0;
     int period = 13999;
     WM_HWIN hMenu; // menu window handle
     WM_HWIN hChild; // frame content window handle
@@ -236,7 +236,7 @@ int main(void)
     
     // Setup
     GUI_SetFont(&GUI_Font8x16);
-    GUI_SetBkColor(GUI_BLACK);
+    GUI_SetBkColor(0x00050505);
     GUI_Clear();
     GUI_DispString("Sentinel Power");
     
@@ -306,6 +306,7 @@ int main(void)
     
     hSpin = SPINBOX_CreateEx(0,0, WM_GetWindowSizeX(hChild),
             50, hChild, WM_CF_SHOW, GUI_ID_SPINBOX0, 1, 200);
+    SPINBOX_SetBkColor(hSpin, SPINBOX_CI_ENABLED, GUI_LIGHTCYAN);
     SPINBOX_SetFont(hSpin, GUI_FONT_32B_ASCII);
     SPINBOX_SetValue(hSpin, batteryCap);
     
@@ -378,14 +379,14 @@ int main(void)
         //
         // Wait a while
         //
-        GUI_Delay(50);*/
+        GUI_Delay(50);/*
         /*
          * END OF CALIBRATION CODE
          */
         
         // Debug Code
-        /*
-        GUI_PID_GetCurrentState(&pstate);
+        
+        /*GUI_PID_GetCurrentState(&pstate);
 
         GUI_SetFont(&GUI_Font8x16);
         
@@ -518,27 +519,34 @@ void TIM3_IRQHandler(void){
 SENSORS getMeasurement(void) {
     static int callCount = 0;
     static float freqSum = 0;
+    static float voltSum = 0;
+    
     SENSORS measured;
-    SENSORS output = measureOutput(ADC2ConvertedValue,ADC2BUFFER,0,2);
+    SENSORS output = measureOutput(ADC2ConvertedValue,ADC2BUFFER);
     
     callCount++;
     
-    if(callCount > 1000) {
+    if(callCount > 500) {
         freqSum = output.outFreq;
+        voltSum = output.outVoltage;
+        
         callCount = 1;
     } else {
         freqSum += output.outFreq;
+        voltSum += output.outVoltage;
     }
   
     measured.inVoltage = 30.2;
     measured.inCurrent = 1.34;
     measured.inPower = 40.468;
-    measured.outVoltage = output.outVoltage; //119.98;
+    measured.outVoltage = voltSum/callCount; //119.98;
     measured.outCurrent = 2.8;
     measured.outPower = 335.944;
     measured.outFreq = freqSum/callCount; //59.97;
     measured.temp1 = convertTemp(ADC3ConvertedValue[0]); //52.43;
     measured.temp2 = convertTemp(ADC3ConvertedValue[1]); //59.87;
+    measured.delay = output.delay;
+    measured.outLagLead = output.outLagLead;
     
     return measured;
 }
@@ -988,9 +996,11 @@ void updateDispValues(void){
             GUI_GotoXY(234,48);
             GUI_DispFloat(m.outVoltage, 6);
             GUI_GotoXY(234,64);
-            GUI_DispFloat(m.outCurrent, 6);
+            GUI_DispDec(m.delay, 6);
+            //GUI_DispFloat(m.outCurrent, 6);
             GUI_GotoXY(218,80);
-            GUI_DispFloat(m.outPower, 6);
+            GUI_DispDec(m.outLagLead, 6);
+            //GUI_DispFloat(m.outPower, 6);
             GUI_GotoXY(250,96);
             GUI_DispFloat(m.outFreq, 6);
             // temperatures

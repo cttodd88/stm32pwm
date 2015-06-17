@@ -25,10 +25,13 @@ typedef struct{
     // temperatures
     float temp1;
     float temp2;
+    // for synch purposes
+    char outLagLead; // 0 = in phase, 1 = lagging, 2 = leading
+    int delay; // delay in index trigger
 } SENSORS;
 
 float convertTemp(int t);
-SENSORS measureOutput(volatile uint16_t adc2Val[], int size, int offset, int numChan);
+SENSORS measureOutput(volatile uint16_t adc2Val[], int size);
 
 #ifdef	__cplusplus
 }

@@ -150,7 +150,7 @@ void Init_FSMC(void)
 
   timing.FSMC_AddressSetupTime=0x00;
   timing.FSMC_DataSetupTime=0x0A;
-  timing.FSMC_CLKDivision=0x0;
+  timing.FSMC_CLKDivision=0x02;
   timing.FSMC_AccessMode=FSMC_AccessMode_A;
 
   /*
