@@ -94,7 +94,7 @@ FRAMEWIN_Handle hFrame;
 SPINBOX_Handle hSpin;
 int currentScreen = 0; // tracks current screen
 int batteryCap = 18; // battery capacity in Ah
-unsigned char homeStatusFlg = DCFLAG | BATTFLAG;
+unsigned char homeStatusFlg = DCFLAG | BATTFLAG | TEMPFLAG;
 
 volatile uint16_t ADC3ConvertedValue[2];
 volatile uint16_t ADC2ConvertedValue[5000];
@@ -157,7 +157,7 @@ int main(void)
     //RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
 
     //period=874;
-    genLookup(lookup,100,13999);
+    genLookup(lookup,100,13000);
        
     
 
@@ -442,24 +442,22 @@ void TIM3_IRQHandler(void){
 
 
 
-	 if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET)
-	    {
-	        TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
+    if (TIM_GetITStatus(TIM3, TIM_IT_Update) != RESET) {
+	TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 
+        if (homeStatusFlg & ONFLAG) {
+            if(index2<=50){
 
-	if(index2<=50){
+            PWMTIM3_InitOC4(lookup[index2]);
 
-	PWMTIM3_InitOC4(lookup[index2]);
+            }
 
-	}
+            if(index2>=50){
 
-	if(index2>=50){
+            PWMTIM3_InitOC3(lookup[index2]);
 
-	PWMTIM3_InitOC3(lookup[index2]);
-
-	}
-
-
+            }
+        }
 
 	index2++;
 
@@ -539,12 +537,12 @@ SENSORS getMeasurement(void) {
     measured.inVoltage = 30.2;
     measured.inCurrent = 1.34;
     measured.inPower = 40.468;
-    measured.outVoltage = voltSum/callCount; //119.98;
+    measured.outVoltage = /*voltSum/callCount;*/ 119.98;
     measured.outCurrent = 2.8;
     measured.outPower = 335.944;
-    measured.outFreq = freqSum/callCount; //59.97;
-    measured.temp1 = convertTemp(ADC3ConvertedValue[0]); //52.43;
-    measured.temp2 = convertTemp(ADC3ConvertedValue[1]); //59.87;
+    measured.outFreq = /*freqSum/callCount;*/ 59.97;
+    measured.temp1 = /*convertTemp(ADC3ConvertedValue[0]);*/ 52.43;
+    measured.temp2 = /*convertTemp(ADC3ConvertedValue[1]);*/ 59.87;
     measured.delay = output.delay;
     measured.outLagLead = output.outLagLead;
     
@@ -636,6 +634,13 @@ void cbWindow(WM_MESSAGE * pMsg) {
                     switch(NCode) {
                         case WM_NOTIFICATION_RELEASED:
                             homeStatusFlg ^= ONFLAG;
+                            
+                            if(homeStatusFlg & ONFLAG){
+                                GPIO_SetBits(GPIOD, GPIO_Pin_3);
+                            } else {
+                                GPIO_ResetBits(GPIOD, GPIO_Pin_3);
+                            }
+                            
                             break;
                     }
                     break;
@@ -913,7 +918,7 @@ void setBatteryCapacity(void) {
 void updateDispValues(void){
     SENSORS m = getMeasurement();
     BATTINFO b = getBattMeas(); 
-    
+      
     switch(currentScreen){
         case 0:
             // home screen
@@ -996,11 +1001,11 @@ void updateDispValues(void){
             GUI_GotoXY(234,48);
             GUI_DispFloat(m.outVoltage, 6);
             GUI_GotoXY(234,64);
-            GUI_DispDec(m.delay, 6);
-            //GUI_DispFloat(m.outCurrent, 6);
+            //GUI_DispDec(m.delay, 6);
+            GUI_DispFloat(m.outCurrent, 6);
             GUI_GotoXY(218,80);
-            GUI_DispDec(m.outLagLead, 6);
-            //GUI_DispFloat(m.outPower, 6);
+            //GUI_DispDec(m.outLagLead, 6);
+            GUI_DispFloat(m.outPower, 6);
             GUI_GotoXY(250,96);
             GUI_DispFloat(m.outFreq, 6);
             // temperatures

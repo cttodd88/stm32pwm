@@ -37,7 +37,7 @@ SENSORS measureOutput(volatile uint16_t adc2Val[], int size) {
     char outTransition = 0;
     
     for(i = 0; i < size; i++) {
-        voltage = adc2Val[i] * 0.000732421;
+        voltage = ((adc2Val[i] * 0.000732421) - 1.5) * 12.2;
         
         if(!chanSelect) {
             vSqrd = vSqrd + (voltage * voltage);
